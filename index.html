@@ -317,13 +317,6 @@
 }
     .mode-grid{display:grid;grid-template-columns:1fr;gap:10px;margin-top:18px}
    
-
-
-
-
-
-
-
     .confetti{position:absolute;inset:0;pointer-events:none;overflow:hidden}
     .confetti i{position:absolute;width:9px;height:16px;border-radius:4px;top:-20px;animation:fall 1.4s linear forwards;background:var(--primary)}
 .delete-btn {
@@ -372,7 +365,7 @@
 }
 
 .start-screen::after {
-  content: "✦  •  ✧  •  ✦";
+  content: "";
   position: absolute;
   inset: auto 0 8%;
   text-align: center;
@@ -588,31 +581,7 @@
 }
 
     
-body::after {
-  content: "v1.0.1 • © 2026 VENN Quest • Powered by Minta";
-  position: fixed;
-  left: 50%;
-  bottom: calc(8px + env(safe-area-inset-bottom));
-  transform: translateX(-50%);
-  z-index: 99999;
 
-  width: max-content;
-  max-width: calc(100vw - 24px);
-  padding: 5px 10px;
-  border-radius: 999px;
-
-  text-align: center;
-  color: rgba(255,255,255,.92);
-  background: rgba(15,23,42,.18);
-  backdrop-filter: blur(8px);
-  font-family: "Kanit", sans-serif;
-  font-size: .72rem;
-  font-weight: 700;
-  line-height: 1.35;
-  text-shadow: 0 2px 8px rgba(15,23,42,.42);
-
-  pointer-events: none;
-}
   </style>
 </head>
 <body>
@@ -658,9 +627,9 @@ body::after {
       เริ่มเกมใหม่
     </button>
     <div class="app-credit">
-    <div id="startVersion">v1.0.0</div>
+    <div id="startVersion">v 1.0.0</div>
     <div>© 2026 VENN Quest</div>
-    <div>Powered by Pitchaya</div>
+    <div>Powered by Minta</div>
   </div>
   </div>
 
