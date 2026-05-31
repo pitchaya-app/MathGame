@@ -1833,17 +1833,45 @@ function showGameMenu() {
       $('overlay').classList.add('show');
     }
 
-    function getSavedProgress(){
-      try{return JSON.parse(localStorage.getItem(SAVE_KEY)||'null')}catch(e){return null}
-    }
-    function saveProgress(){
-      if(!$('startScreen') || $('startScreen').classList.contains('show')) return;
-      const data={currentIndex,score,combo,lives,correctStreak,gameMode,answerCards,updatedAt:Date.now()};
-      try{localStorage.setItem(SAVE_KEY,JSON.stringify(data));updateContinueButton()}catch(e){}
-    }
-    function clearSavedProgress(){
-      try{localStorage.removeItem(SAVE_KEY);updateContinueButton()}catch(e){}
-    }
+function getSavedProgress(){
+  try {
+    return JSON.parse(localStorage.getItem(SAVE_KEY) || 'null');
+  } catch(e) {
+    return null;
+  }
+}
+
+function saveProgress(force = false){
+  // ถ้าไม่ได้ force และยังไม่เคยเริ่มเล่นจริง ไม่ต้องบันทึก
+  if (!force && (!$('startScreen') || $('startScreen').classList.contains('show'))) {
+    return;
+  }
+
+  const data = {
+    currentIndex,
+    score,
+    combo,
+    lives,
+    correctStreak,
+    gameMode,
+    answerCards,
+    updatedAt: Date.now()
+  };
+
+  try {
+    localStorage.setItem(SAVE_KEY, JSON.stringify(data));
+    updateContinueButton();
+  } catch(e) {
+    console.warn('Save progress failed:', e);
+  }
+}
+
+function clearSavedProgress(){
+  try {
+    localStorage.removeItem(SAVE_KEY);
+    updateContinueButton();
+  } catch(e) {}
+}
     function updateContinueButton(){
       const btn=$('continueBtn');
       if(!btn) return;
