@@ -79,6 +79,23 @@
       font-weight:800;
       font-size:.94rem;
     }
+    .menu-btn {
+  width: 38px;
+  height: 38px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: rgba(255,255,255,.86);
+  color: #334155;
+  font-family: "Kanit";
+  font-size: 1.15rem;
+  font-weight: 800;
+  box-shadow: 0 10px 26px rgba(15,23,42,.08);
+  cursor: pointer;
+}
+
+.menu-btn:active {
+  transform: scale(.95);
+}
     .scorebox span{color:var(--primary)}
     .life-box span{color:inherit;font-size:.9rem;letter-spacing:-2px}
 
@@ -258,7 +275,10 @@
         <div class="logo">∩</div>
         <div class="brand-text"><div class="brand-title">Venn Quest ABC</div><div class="brand-sub" id="modeLabel">โหมดง่าย</div></div>
       </div>
-      <div class="score-life"><div class="scorebox">⭐ <span id="score">0</span></div><div class="scorebox life-box"><span id="lifeText">❤️❤️❤️❤️❤️</span></div></div>
+      <div class="score-life">
+  <button class="menu-btn" onclick="showGameMenu()" aria-label="เมนูเกม">☰</button>
+  <div class="scorebox life-box"><span id="lifeText">❤️❤️❤️</span></div>
+</div>
     </header>
 
     <div class="progress-wrap">
@@ -646,8 +666,7 @@
       loadQuestion();
     }
     function updateUI(){
-      $('score').textContent=score;
-      $('comboText').textContent=`Combo x${combo} • Streak ${correctStreak}`;
+$('comboText').textContent=`⭐ ${score} • Combo x${combo}`;
       if(lives<=HEART_ICON_LIMIT){
         $('lifeText').textContent='❤️'.repeat(lives)+'🤍'.repeat(HEART_ICON_LIMIT-lives);
       }else{
@@ -734,25 +753,71 @@
       $('confetti').innerHTML='';
       $('overlay').classList.add('show');
     }
+    function showGameMenu() {
+  modalAction = 'menu';
+  $('modalEmoji').textContent = '⚙️';
+  $('modalTitle').textContent = 'เมนูเกม';
+  $('modalText').textContent = `ตอนนี้อยู่ด่านที่ ${currentIndex + 1} • คะแนน ${score} คะแนน`;
+
+  $('modalButton').style.display = 'block';
+  $('modalButton').textContent = 'เริ่มเกมใหม่';
+
+  $('modalCancel').style.display = 'block';
+  $('modalCancel').textContent = 'เล่นต่อ';
+
+  $('confetti').innerHTML = '';
+  $('overlay').classList.add('show');
+}
+
     function handleModalButton(){
-      if(modalAction==='revealConfirm'){
-        confirmReveal();
-        return;
-      }
-      $('overlay').classList.remove('show');
-      $('modalCancel').style.display='none';
-      if(modalAction==='revealNoLives'){
-        setTimeout(()=>handleNoLives(),120);
-        return;
-      }
-      if(modalAction==='finish'){
-        $('startScreen').classList.add('show');
-        updateContinueButton();
-        return;
-      }
-      if(modalAction==='wrong'||modalAction==='practice'||modalAction==='reveal')return;
-      if(modalAction==='restart'){currentIndex=0;score=0;combo=1;lives=START_LIVES;correctStreak=0;answerCards=[];clearSavedProgress();loadQuestion();updateUI();saveProgress()}
-    }
+  if(modalAction==='revealConfirm'){
+    confirmReveal();
+    return;
+  }
+
+  $('overlay').classList.remove('show');
+  $('modalCancel').style.display='none';
+
+  if (modalAction === 'menu') {
+    currentIndex = 0;
+    score = 0;
+    combo = 1;
+    lives = START_LIVES;
+    correctStreak = 0;
+    answerCards = [];
+    clearSavedProgress();
+    loadQuestion();
+    updateUI();
+    saveProgress();
+    return;
+  }
+
+  if(modalAction==='revealNoLives'){
+    setTimeout(()=>handleNoLives(),120);
+    return;
+  }
+
+  if(modalAction==='finish'){
+    $('startScreen').classList.add('show');
+    updateContinueButton();
+    return;
+  }
+
+  if(modalAction==='wrong'||modalAction==='practice'||modalAction==='reveal')return;
+
+  if(modalAction==='restart'){
+    currentIndex=0;
+    score=0;
+    combo=1;
+    lives=START_LIVES;
+    correctStreak=0;
+    answerCards=[];
+    clearSavedProgress();
+    loadQuestion();
+    updateUI();
+    saveProgress();
+  }
+}
     function showFinishCard(){
       $('modalCancel').style.display='none';
       modalAction='finish';
