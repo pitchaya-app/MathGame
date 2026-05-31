@@ -354,16 +354,21 @@ body {
   /* ===== VENN Quest Splash / Start Screen ===== */
 .start-screen {
   position: fixed;
-  inset: 0;
-  width: 100vw;
-  height: 100vh;
-  height: 100dvh;
+  top: 0;
+  left: 0;
+  right: 0;
+
+  /* ดันพื้นหลังลงไปใต้ขอบ iOS PWA ให้พ้นแถบขาว */
+  bottom: -90px;
+
+  min-height: 100vh;
+  min-height: 100dvh;
   min-height: -webkit-fill-available;
 
   padding:
     calc(18px + env(safe-area-inset-top))
     18px
-    calc(18px + env(safe-area-inset-bottom));
+    calc(30px + env(safe-area-inset-bottom) + 90px);
 
   background:
     radial-gradient(circle at 50% 12%, rgba(34,211,238,.45), transparent 28%),
@@ -1086,49 +1091,11 @@ body::before {
     pointer-events: none;
   }
 }
-/* ===== FINAL iOS PWA White Bottom Fix ===== */
-html,
-body {
-  margin: 0 !important;
-  padding: 0 !important;
-  width: 100% !important;
-  min-height: 100vh !important;
-  min-height: 100dvh !important;
-  background: #5b21b6 !important;
-  overflow-x: hidden !important;
-}
-
-.pwa-bg-fix {
-  position: fixed;
-  inset: -160px 0 -240px 0;
-  z-index: 0;
-  pointer-events: none;
-  background:
-    radial-gradient(circle at 50% 12%, rgba(34,211,238,.45), transparent 28%),
-    radial-gradient(circle at 20% 22%, rgba(59,130,246,.34), transparent 26%),
-    radial-gradient(circle at 84% 76%, rgba(168,85,247,.38), transparent 30%),
-    linear-gradient(160deg, #0284c7 0%, #1d4ed8 45%, #5b21b6 100%);
-}
-
-.app {
-  position: relative;
-  z-index: 1;
-}
-
-.start-screen {
-  z-index: 20;
-  background: transparent !important;
-}
-
-.start-screen.show {
-  background: transparent !important;
-}
-    
 
   </style>
 </head>
 <body>
-  <div class="pwa-bg-fix"></div>
+  
 
   <main class="app">
   
