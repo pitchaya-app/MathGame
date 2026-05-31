@@ -587,7 +587,11 @@
     function updateUI(){
       $('score').textContent=score;
       $('comboText').textContent=`Combo x${combo} • Streak ${correctStreak}`;
-      $('lifeText').textContent='❤️'.repeat(lives)+'🤍'.repeat(MAX_LIVES-lives);
+      if(lives<=MAX_LIVES){
+        $('lifeText').textContent='❤️'.repeat(lives)+'🤍'.repeat(MAX_LIVES-lives);
+      }else{
+        $('lifeText').textContent=`${lives} ❤️`;
+      }
       $('levelText').textContent=`ด่านที่ ${currentIndex+1} / ${levels.length}`;
       progressBar.style.width=((currentIndex+1)/levels.length*100)+'%';
       updateModeUI();
