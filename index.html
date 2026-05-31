@@ -299,6 +299,18 @@
   backdrop-filter: none;
   color: #fff;
   animation: pop .32s ease;
+  position: relative;
+  z-index: 2;
+  pointer-events: auto;
+}
+
+    .start-card button,
+.start-btn,
+.mode-card {
+  position: relative;
+  z-index: 3;
+  pointer-events: auto;
+  touch-action: manipulation;
 }
 
 .splash-icon-wrap {
