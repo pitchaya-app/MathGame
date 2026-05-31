@@ -35,7 +35,20 @@ button{font-family:"Kanit",system-ui,sans-serif}
 @keyframes fadeIn{from{opacity:0}to{opacity:1}}@keyframes pop{from{transform:scale(.88) translateY(14px);opacity:.4}to{transform:scale(1) translateY(0);opacity:1}}@keyframes fall{to{transform:translateY(105dvh) rotate(420deg);opacity:.95}}@keyframes splashRays{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
 @media (min-width:720px){body{padding:16px}.app{min-height:calc(100dvh - 32px);border-radius:36px;box-shadow:0 30px 90px rgba(15,23,42,.14)}.start-screen{border-radius:36px}}
 @media (max-width:390px){.topbar{padding-left:14px;padding-right:14px}.game-logo{width:46px;height:46px}.brand-title{font-size:1.02rem}.brand-sub{font-size:.74rem}.venn-card{min-height:280px}.expression-box{font-size:1.6rem}.symbol-btn{height:39px;font-size:1.05rem;border-radius:12px}.button-bank{gap:4px}.scorebox{padding:7px 8px}.action-btn{min-height:48px;font-size:.96rem}.bottom-panel{margin-left:14px;margin-right:14px;padding:12px}}
+.start-screen.show {
+  animation: startFadeIn .35s ease both;
+}
 
+@keyframes startFadeIn {
+  from {
+    opacity: .92;
+    transform: translateY(2px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
   </style>
 </head>
 <body>
@@ -270,9 +283,10 @@ function saveProgress(force=false){if(!force&&(!$('startScreen')||$('startScreen
 function clearSavedProgress(){try{localStorage.removeItem(SAVE_KEY)}catch(e){}clearProgressFromIDB();updateContinueButton()}
 async function updateContinueButton(){const btn=$('continueBtn');if(!btn)return;const data=await getSavedProgressAsync();if(data&&Number.isFinite(Number(data.currentIndex))){btn.style.display='block';btn.textContent=`เล่นต่อ ด่านที่ ${Number(data.currentIndex)+1}`}else{btn.style.display='none'}}
 
-function nudgeIOSPWAViewport() {
-  const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || 
-                (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+function nudgeIOSPWAViewportSoft() {
+  const isIOS =
+    /iPad|iPhone|iPod/.test(navigator.userAgent) ||
+    (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
 
   const isStandalone =
     window.navigator.standalone === true ||
@@ -280,29 +294,39 @@ function nudgeIOSPWAViewport() {
 
   if (!isIOS || !isStandalone) return;
 
-  const nudge = () => {
-    // ให้ body สูงกว่าจอชั่วคราว เพื่อให้ scroll ได้จริง
-    document.documentElement.style.minHeight = 'calc(100vh + 2px)';
-    document.body.style.minHeight = 'calc(100vh + 2px)';
+  const root = document.documentElement;
+  const body = document.body;
+  const scroller = document.scrollingElement || root;
 
-    window.scrollTo(0, 1);
+  // กัน animation / scroll smooth ทำให้เห็นการกระตุก
+  const oldScrollBehavior = root.style.scrollBehavior;
+  root.style.scrollBehavior = 'auto';
 
-    setTimeout(() => {
-      window.scrollTo(0, 0);
-      document.documentElement.style.minHeight = '';
-      document.body.style.minHeight = '';
-    }, 80);
-  };
+  // เพิ่มพื้นที่ให้เลื่อนได้แค่นิดเดียว
+  const oldBodyMinHeight = body.style.minHeight;
+  const oldRootMinHeight = root.style.minHeight;
+  body.style.minHeight = 'calc(100vh + 3px)';
+  root.style.minHeight = 'calc(100vh + 3px)';
 
-  setTimeout(nudge, 80);
-  setTimeout(nudge, 300);
-  setTimeout(nudge, 700);
-}    
+  // ให้ browser render ก่อน 1 เฟรม แล้วค่อย nudge
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      scroller.scrollTop = 1;
+
+      // อย่ารีบเด้งกลับทันที ให้ iOS คำนวณ viewport ก่อน
+      setTimeout(() => {
+        scroller.scrollTop = 0;
+
+        body.style.minHeight = oldBodyMinHeight;
+        root.style.minHeight = oldRootMinHeight;
+        root.style.scrollBehavior = oldScrollBehavior;
+      }, 120);
+    });
+  });
+}   
 
     
 function init(){
-  nudgeIOSPWAViewport();
-
   loadQuestion();
   updateModeUI();
   updateContinueButton();
@@ -310,6 +334,8 @@ function init(){
   if ($('startVersion')) {
     $('startVersion').textContent = APP_VERSION;
   }
+
+  nudgeIOSPWAViewportSoft();
 }
 function selectMode(mode){gameMode=mode;updateModeUI()}
 function updateModeUI(){if($('easyModeBtn'))$('easyModeBtn').classList.toggle('active',gameMode==='easy');if($('hardModeBtn'))$('hardModeBtn').classList.toggle('active',gameMode==='hard');$('modeLabel').textContent=gameMode==='easy'?'โหมดฝึกหัด':'โหมดท้าทาย'}
