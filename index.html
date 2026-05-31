@@ -751,7 +751,7 @@
     function updateModeUI(){
       if($('easyModeBtn'))$('easyModeBtn').classList.toggle('active',gameMode==='easy');
       if($('hardModeBtn'))$('hardModeBtn').classList.toggle('active',gameMode==='hard');
-      $('modeLabel').textContent=gameMode==='easy'?'โหมดง่าย':'โหมดยาก';
+      $('modeLabel').textContent=gameMode==='easy'?'โหมดฝึกหัด':'โหมดท้าทาย';
     }
     function startGame(){currentIndex=0;score=0;combo=1;lives=START_LIVES;correctStreak=0;answerCards=[];clearSavedProgress();$('startScreen').classList.remove('show');loadQuestion();updateUI();saveProgress()}
 
