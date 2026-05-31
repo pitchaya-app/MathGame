@@ -354,21 +354,16 @@ body {
   /* ===== VENN Quest Splash / Start Screen ===== */
 .start-screen {
   position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-
-  /* ดันพื้นหลังลงไปใต้ขอบ iOS PWA ให้พ้นแถบขาว */
-  bottom: -90px;
-
-  min-height: 100vh;
-  min-height: 100dvh;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  height: 100dvh;
   min-height: -webkit-fill-available;
 
   padding:
     calc(18px + env(safe-area-inset-top))
     18px
-    calc(30px + env(safe-area-inset-bottom) + 90px);
+    calc(18px + env(safe-area-inset-bottom));
 
   background:
     radial-gradient(circle at 50% 12%, rgba(34,211,238,.45), transparent 28%),
@@ -1042,6 +1037,54 @@ svg {
   background: #5b21b6;
   z-index: 0;
   pointer-events: none;
+}
+
+    /* ===== iOS PWA Bottom White Fix: background layer ===== */
+html,
+body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  min-height: 100%;
+  background-color: #5b21b6 !important;
+  overflow-x: hidden;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -9999;
+  background:
+    radial-gradient(circle at 50% 12%, rgba(34,211,238,.45), transparent 28%),
+    radial-gradient(circle at 20% 22%, rgba(59,130,246,.34), transparent 26%),
+    radial-gradient(circle at 84% 76%, rgba(168,85,247,.38), transparent 30%),
+    linear-gradient(160deg, #0284c7 0%, #1d4ed8 45%, #5b21b6 100%);
+}
+
+    body:has(.start-screen.show) .app {
+  background: transparent !important;
+  min-height: 100vh;
+  min-height: 100dvh;
+}
+
+    @supports (-webkit-touch-callout: none) {
+  html,
+  body {
+    background: #5b21b6 !important;
+  }
+
+  body::after {
+    content: "";
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 120px;
+    z-index: -9998;
+    background: #5b21b6;
+    pointer-events: none;
+  }
 }
 
     
