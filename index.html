@@ -34,7 +34,12 @@
     }
 
     *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-    html,body{min-height:100%}
+    html,
+body {
+  min-height: 100%;
+  min-height: -webkit-fill-available;
+  background: linear-gradient(160deg, #0284c7 0%, #1d4ed8 45%, #5b21b6 100%);
+}
     body{
       margin:0;
       font-family:"Kanit",system-ui,sans-serif;
@@ -46,8 +51,10 @@
         linear-gradient(135deg,var(--bg),var(--bg2));
     }
 
-    .app{
-      min-height:100dvh;
+.app {
+  min-height: 100vh;
+  min-height: 100dvh;
+  min-height: -webkit-fill-available;
       display:flex;
       flex-direction:column;
       max-width:560px;
@@ -340,6 +347,16 @@
     @media (max-width:390px){.venn-card{min-height:305px}.expression-box{min-height:58px;font-size:1.65rem}.symbol-btn{height:38px;font-size:1.05rem;border-radius:12px}.button-bank{gap:4px}.life-box span{font-size:.82rem}.scorebox{padding:7px 8px}.action-btn{min-height:46px}}
   /* ===== VENN Quest Splash / Start Screen ===== */
 .start-screen {
+  position: fixed;
+  inset: 0;
+  min-height: 100vh;
+  min-height: 100dvh;
+  min-height: -webkit-fill-available;
+  padding:
+    calc(18px + env(safe-area-inset-top))
+    18px
+    calc(18px + env(safe-area-inset-bottom));
+
   background:
     radial-gradient(circle at 50% 12%, rgba(34,211,238,.45), transparent 28%),
     radial-gradient(circle at 20% 22%, rgba(59,130,246,.34), transparent 26%),
@@ -578,6 +595,13 @@
   color: #64748b;
   font-size: .78rem;
   font-weight: 700;
+}
+
+    body:has(.start-screen.show) {
+  overflow: hidden;
+}
+    .start-screen.show {
+  overflow: hidden;
 }
 
     
