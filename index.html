@@ -1092,30 +1092,65 @@ body::before {
   }
 }
 
-    /* ===== Real viewport height for iOS PWA ===== */
-:root {
-  --real-vh: 100dvh;
-}
+  /* ===== Stable iOS PWA Layout Fix ===== */
 
 html,
 body {
-  min-height: var(--real-vh) !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  width: 100% !important;
+  min-height: 100vh !important;
+  min-height: 100dvh !important;
   background: #5b21b6 !important;
+  overflow-x: hidden !important;
 }
 
+/* หน้าเล่นเกมให้เป็น layout ปกติ ไม่ถูก viewport JS บีบ */
 .app {
-  min-height: var(--real-vh) !important;
+  min-height: 100vh;
+  min-height: 100dvh;
+  position: relative;
+  overflow: hidden;
 }
 
-.start-screen {
-  height: var(--real-vh) !important;
-  min-height: var(--real-vh) !important;
+/* Start screen เป็น overlay เต็มจอ และยืดเกินล่างเพื่อปิดขาว */
+.start-screen.show {
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: -180px !important;
+
+  min-height: calc(100vh + 180px) !important;
+  min-height: calc(100dvh + 180px) !important;
+
+  display: grid !important;
+  place-items: center !important;
+
+  padding:
+    calc(18px + env(safe-area-inset-top))
+    18px
+    calc(180px + env(safe-area-inset-bottom)) !important;
+
+  background:
+    radial-gradient(circle at 50% 12%, rgba(34,211,238,.45), transparent 28%),
+    radial-gradient(circle at 20% 22%, rgba(59,130,246,.34), transparent 26%),
+    radial-gradient(circle at 84% 76%, rgba(168,85,247,.38), transparent 30%),
+    linear-gradient(160deg, #0284c7 0%, #1d4ed8 45%, #5b21b6 100%) !important;
+
+  overflow: hidden !important;
 }
 
-.pwa-bg-fix {
-  height: calc(var(--real-vh) + 260px) !important;
+/* ตอนหน้า Start แสดง ให้ body เป็นม่วงล่างสุด */
+body:has(.start-screen.show) {
+  background: #5b21b6 !important;
+  overflow: hidden !important;
 }
 
+/* ตอนหน้าเล่นเกม ให้เลื่อนภายใน app ได้ตามปกติ */
+body:not(:has(.start-screen.show)) {
+  overflow: auto !important;
+}
   </style>
 </head>
 <body>
@@ -1849,42 +1884,7 @@ function closeOverlayOnly(){
         .catch(err => console.warn('Service Worker registration failed:', err));
     });
   }
-    function setRealViewportHeight() {
-  const viewportHeight = window.visualViewport
-    ? window.visualViewport.height
-    : window.innerHeight;
-
-  document.documentElement.style.setProperty('--real-vh', `${viewportHeight}px`);
-}
-
-window.addEventListener('load', () => {
-  setRealViewportHeight();
-
-  // iOS PWA มักคำนวณ viewport ช้ากว่าหน้าเว็บโหลด
-  setTimeout(setRealViewportHeight, 80);
-  setTimeout(setRealViewportHeight, 250);
-  setTimeout(setRealViewportHeight, 600);
-});
-
-window.addEventListener('resize', setRealViewportHeight);
-
-if (window.visualViewport) {
-  window.visualViewport.addEventListener('resize', setRealViewportHeight);
-  window.visualViewport.addEventListener('scroll', setRealViewportHeight);
-}
-
-    function refreshStartScreenViewport() {
-  setRealViewportHeight();
-
-  requestAnimationFrame(() => {
-    setRealViewportHeight();
-    document.body.style.transform = 'translateZ(0)';
-    setTimeout(() => {
-      document.body.style.transform = '';
-      setRealViewportHeight();
-    }, 60);
-  });
-}
+   
   </script>
 </body>
 </html>
