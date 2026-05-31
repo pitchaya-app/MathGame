@@ -1092,6 +1092,30 @@ body::before {
   }
 }
 
+    /* ===== Real viewport height for iOS PWA ===== */
+:root {
+  --real-vh: 100dvh;
+}
+
+html,
+body {
+  min-height: var(--real-vh) !important;
+  background: #5b21b6 !important;
+}
+
+.app {
+  min-height: var(--real-vh) !important;
+}
+
+.start-screen {
+  height: var(--real-vh) !important;
+  min-height: var(--real-vh) !important;
+}
+
+.pwa-bg-fix {
+  height: calc(var(--real-vh) + 260px) !important;
+}
+
   </style>
 </head>
 <body>
@@ -1418,7 +1442,9 @@ body::before {
     const $=id=>document.getElementById(id);
     const answerZone=$('answerZone'),cardBank=$('cardBank'),progressBar=$('progressBar');
 
-    function init(){
+function init(){
+  refreshStartScreenViewport();
+
   loadQuestion();
   updateModeUI();
   updateContinueButton();
@@ -1707,6 +1733,7 @@ function showGameMenu() {
   saveProgress();
   $('startScreen').classList.add('show');
   updateContinueButton();
+  refreshStartScreenViewport();
 }
 
     function handleModalButton(){
@@ -1822,6 +1849,42 @@ function closeOverlayOnly(){
         .catch(err => console.warn('Service Worker registration failed:', err));
     });
   }
+    function setRealViewportHeight() {
+  const viewportHeight = window.visualViewport
+    ? window.visualViewport.height
+    : window.innerHeight;
+
+  document.documentElement.style.setProperty('--real-vh', `${viewportHeight}px`);
+}
+
+window.addEventListener('load', () => {
+  setRealViewportHeight();
+
+  // iOS PWA มักคำนวณ viewport ช้ากว่าหน้าเว็บโหลด
+  setTimeout(setRealViewportHeight, 80);
+  setTimeout(setRealViewportHeight, 250);
+  setTimeout(setRealViewportHeight, 600);
+});
+
+window.addEventListener('resize', setRealViewportHeight);
+
+if (window.visualViewport) {
+  window.visualViewport.addEventListener('resize', setRealViewportHeight);
+  window.visualViewport.addEventListener('scroll', setRealViewportHeight);
+}
+
+    function refreshStartScreenViewport() {
+  setRealViewportHeight();
+
+  requestAnimationFrame(() => {
+    setRealViewportHeight();
+    document.body.style.transform = 'translateZ(0)';
+    setTimeout(() => {
+      document.body.style.transform = '';
+      setRealViewportHeight();
+    }, 60);
+  });
+}
   </script>
 </body>
 </html>
