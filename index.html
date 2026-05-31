@@ -1,0 +1,857 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Venn Card Match | เกมเซต</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg1: #eef7ff;
+      --bg2: #f6f0ff;
+      --primary: #2563eb;
+      --primary-dark: #1d4ed8;
+      --success: #16a34a;
+      --danger: #dc2626;
+      --warning: #f59e0b;
+      --text: #172033;
+      --muted: #64748b;
+      --card: rgba(255, 255, 255, 0.88);
+      --line: rgba(148, 163, 184, 0.35);
+      --shadow: 0 18px 45px rgba(30, 64, 175, 0.13);
+      --radius: 24px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: "Kanit", sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at top left, rgba(59, 130, 246, 0.20), transparent 34%),
+        radial-gradient(circle at top right, rgba(168, 85, 247, 0.18), transparent 36%),
+        linear-gradient(135deg, var(--bg1), var(--bg2));
+      padding: 18px;
+    }
+
+    .app {
+      max-width: 1180px;
+      margin: 0 auto;
+    }
+
+    .hero {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      align-items: center;
+      padding: 18px 20px;
+      border: 1px solid var(--line);
+      background: var(--card);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(14px);
+      margin-bottom: 16px;
+    }
+
+    .hero h1 {
+      margin: 0;
+      font-size: clamp(1.5rem, 4vw, 2.45rem);
+      line-height: 1.1;
+    }
+
+    .hero p {
+      margin: 8px 0 0;
+      color: var(--muted);
+      font-size: 1rem;
+    }
+
+    .score-pill {
+      min-width: 160px;
+      border-radius: 999px;
+      padding: 12px 18px;
+      background: linear-gradient(135deg, #2563eb, #7c3aed);
+      color: white;
+      text-align: center;
+      box-shadow: 0 12px 28px rgba(37, 99, 235, 0.25);
+    }
+
+    .score-pill .small {
+      font-size: 0.82rem;
+      opacity: 0.88;
+    }
+
+    .score-pill .big {
+      font-size: 1.5rem;
+      font-weight: 700;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1.08fr) minmax(330px, 0.92fr);
+      gap: 16px;
+      align-items: stretch;
+    }
+
+    .panel {
+      border: 1px solid var(--line);
+      background: var(--card);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(14px);
+      overflow: hidden;
+    }
+
+    .panel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      padding: 16px 18px;
+      border-bottom: 1px solid var(--line);
+      background: rgba(255, 255, 255, 0.55);
+    }
+
+    .panel-title {
+      font-size: 1.18rem;
+      font-weight: 700;
+    }
+
+    .level-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      border-radius: 999px;
+      padding: 8px 12px;
+      background: #eff6ff;
+      color: #1d4ed8;
+      font-weight: 600;
+      font-size: 0.92rem;
+      white-space: nowrap;
+    }
+
+    .venn-area {
+      padding: 18px;
+    }
+
+    .question-card {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 14px 16px;
+      background: #f8fafc;
+      border: 1px dashed rgba(37, 99, 235, 0.28);
+      border-radius: 18px;
+      margin-bottom: 14px;
+    }
+
+    .question-card .icon {
+      width: 34px;
+      height: 34px;
+      display: grid;
+      place-items: center;
+      border-radius: 12px;
+      background: #dbeafe;
+      color: #1d4ed8;
+      flex: 0 0 auto;
+    }
+
+    .question-card strong {
+      display: block;
+      margin-bottom: 2px;
+      font-size: 1.04rem;
+    }
+
+    .question-card span {
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    .venn-wrap {
+      position: relative;
+      border-radius: 22px;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0.80), rgba(248,250,252,0.92)),
+        repeating-linear-gradient(45deg, rgba(37,99,235,0.035) 0 10px, transparent 10px 20px);
+      border: 1px solid var(--line);
+      min-height: 360px;
+      display: grid;
+      place-items: center;
+      overflow: hidden;
+      padding: 14px;
+    }
+
+    svg {
+      width: min(100%, 570px);
+      height: auto;
+      display: block;
+    }
+
+    .universe {
+      fill: #ffffff;
+      stroke: #64748b;
+      stroke-width: 2.5;
+    }
+
+    .region {
+      stroke: none;
+      transition: fill 0.25s ease, opacity 0.25s ease;
+    }
+
+    .region.on {
+      fill: rgba(37, 99, 235, 0.62);
+    }
+
+    .region.off {
+      fill: rgba(226, 232, 240, 0.85);
+    }
+
+    .circle-outline {
+      fill: none;
+      stroke: rgba(15, 23, 42, 0.72);
+      stroke-width: 3;
+    }
+
+    .label {
+      font-size: 30px;
+      font-weight: 700;
+      fill: #0f172a;
+    }
+
+    .right-panel {
+      padding: 16px;
+    }
+
+    .answer-zone {
+      border: 2px dashed rgba(37, 99, 235, 0.35);
+      min-height: 92px;
+      border-radius: 20px;
+      padding: 12px;
+      background: rgba(239, 246, 255, 0.82);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      transition: 0.2s ease;
+    }
+
+    .answer-zone.drag-over {
+      border-color: var(--primary);
+      background: #dbeafe;
+      transform: scale(1.01);
+    }
+
+    .answer-placeholder {
+      color: #64748b;
+      font-size: 0.98rem;
+    }
+
+    .card-bank {
+      margin-top: 16px;
+    }
+
+    .card-bank-title {
+      font-weight: 700;
+      margin-bottom: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .cards {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .math-card {
+      user-select: none;
+      border: none;
+      font-family: "Times New Roman", "Cambria Math", "STIX Two Math", serif;
+      min-width: 56px;
+      height: 52px;
+      padding: 0 16px;
+      border-radius: 16px;
+      background: #ffffff;
+      color: #0f172a;
+      font-family: "Kanit", sans-serif;
+      font-size: 1.3rem;
+      font-weight: 700;
+      box-shadow: 0 9px 18px rgba(15, 23, 42, 0.10);
+      border: 1px solid rgba(148, 163, 184, 0.25);
+      cursor: grab;
+      transition: transform 0.14s ease, box-shadow 0.14s ease, background 0.14s ease;
+    }
+
+    .math-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 24px rgba(15, 23, 42, 0.14);
+    }
+
+    .math-card:active {
+      cursor: grabbing;
+      transform: scale(0.97);
+    }
+
+    .math-card.in-answer {
+      background: #fff7ed;
+      border-color: rgba(245, 158, 11, 0.35);
+    }
+
+    .controls {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 16px;
+    }
+
+    .btn {
+      border: none;
+      border-radius: 16px;
+      min-height: 48px;
+      padding: 12px 16px;
+      font-family: "Kanit", sans-serif;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform 0.14s ease, filter 0.14s ease;
+    }
+
+    .btn:hover {
+      transform: translateY(-1px);
+      filter: brightness(1.02);
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #2563eb, #4f46e5);
+      color: #ffffff;
+      grid-column: span 2;
+    }
+
+    .btn-light {
+      background: #f8fafc;
+      color: #334155;
+      border: 1px solid var(--line);
+    }
+
+    .btn-warning {
+      background: #fffbeb;
+      color: #92400e;
+      border: 1px solid rgba(245, 158, 11, 0.28);
+    }
+
+    .feedback {
+      margin-top: 14px;
+      min-height: 58px;
+      padding: 12px 14px;
+      border-radius: 18px;
+      background: #f8fafc;
+      border: 1px solid var(--line);
+      color: var(--muted);
+    }
+
+    .feedback.correct {
+      background: #ecfdf5;
+      border-color: rgba(22, 163, 74, 0.28);
+      color: #166534;
+    }
+
+    .feedback.wrong {
+      background: #fef2f2;
+      border-color: rgba(220, 38, 38, 0.24);
+      color: #991b1b;
+    }
+
+    .progress {
+      margin-top: 14px;
+      height: 12px;
+      border-radius: 999px;
+      background: #e2e8f0;
+      overflow: hidden;
+    }
+
+    .progress-bar {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #2563eb, #7c3aed);
+      transition: width 0.25s ease;
+    }
+
+    .teacher-note {
+      margin-top: 16px;
+      padding: 14px;
+      border-radius: 18px;
+      background: rgba(255, 255, 255, 0.66);
+      border: 1px solid var(--line);
+      color: #475569;
+      font-size: 0.94rem;
+    }
+
+    .teacher-note strong {
+      color: #0f172a;
+    }
+
+    .celebrate {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      display: grid;
+      place-items: center;
+      z-index: 20;
+      opacity: 0;
+      transition: opacity 0.2s ease;
+    }
+
+    .celebrate.show {
+      opacity: 1;
+    }
+
+    .celebrate-card {
+      background: white;
+      border-radius: 28px;
+      padding: 24px 28px;
+      text-align: center;
+      box-shadow: 0 28px 70px rgba(15, 23, 42, 0.18);
+      transform: scale(0.9);
+      animation: pop 0.45s ease forwards;
+    }
+
+    .celebrate-card .emoji {
+      font-size: 3rem;
+    }
+
+    .celebrate-card h2 {
+      margin: 4px 0 4px;
+      font-size: 1.6rem;
+    }
+
+    .celebrate-card p {
+      margin: 0;
+      color: #64748b;
+    }
+
+    @keyframes pop {
+      from { transform: scale(0.88) translateY(14px); }
+      to { transform: scale(1) translateY(0); }
+    }
+
+    @media (max-width: 860px) {
+      body {
+        padding: 12px;
+      }
+
+      .hero {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .score-pill {
+        width: 100%;
+      }
+
+      .layout {
+        grid-template-columns: 1fr;
+      }
+
+      .venn-wrap {
+        min-height: 300px;
+      }
+    }
+
+    @media (max-width: 460px) {
+      .panel-header {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .controls {
+        grid-template-columns: 1fr;
+      }
+
+      .btn-primary {
+        grid-column: span 1;
+      }
+
+      .math-card {
+        min-width: 50px;
+        height: 48px;
+        font-size: 1.18rem;
+        border-radius: 14px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="app">
+    <section class="hero">
+      <div>
+        <h1>Venn Card Match</h1>
+        <p>ดูแผนภาพเวนน์ที่แรเงา แล้วลากการ์ดมาเรียงเป็นสัญลักษณ์ของเซตให้ถูกต้อง</p>
+      </div>
+      <div class="score-pill">
+        <div class="small">คะแนนสะสม</div>
+        <div class="big"><span id="score">0</span> คะแนน</div>
+      </div>
+    </section>
+
+    <section class="layout">
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-title">โจทย์แผนภาพเวนน์</div>
+          <div class="level-badge" id="levelBadge">ด่านที่ 1 / 8</div>
+        </div>
+
+        <div class="venn-area">
+          <div class="question-card">
+            <div class="icon">?</div>
+            <div>
+              <strong id="questionTitle">บริเวณที่แรเงาแทนเซตใด?</strong>
+              <span id="questionHintSmall">ลากการ์ดด้านขวาไปวางในช่องคำตอบ</span>
+            </div>
+          </div>
+
+          <div class="venn-wrap">
+            <svg viewBox="0 0 620 400" role="img" aria-label="แผนภาพเวนน์ 2 เซต">
+              <defs>
+                <clipPath id="clipU">
+                  <rect x="58" y="42" width="504" height="310" rx="26"></rect>
+                </clipPath>
+
+                <!-- mask สีขาว = แสดง, สีดำ = ตัดออก -->
+                <mask id="maskNotA">
+                  <rect x="0" y="0" width="620" height="400" fill="white"></rect>
+                  <circle cx="255" cy="205" r="125" fill="black"></circle>
+                </mask>
+                <mask id="maskNotB">
+                  <rect x="0" y="0" width="620" height="400" fill="white"></rect>
+                  <circle cx="365" cy="205" r="125" fill="black"></circle>
+                </mask>
+                <mask id="maskOutsideAB">
+                  <rect x="0" y="0" width="620" height="400" fill="white"></rect>
+                  <circle cx="255" cy="205" r="125" fill="black"></circle>
+                  <circle cx="365" cy="205" r="125" fill="black"></circle>
+                </mask>
+              </defs>
+
+              <rect class="universe" x="58" y="42" width="504" height="310" rx="26"></rect>
+
+              <!-- พื้นที่นอก A และ B -->
+              <rect id="outside" class="region off" x="58" y="42" width="504" height="310" rx="26" mask="url(#maskOutsideAB)"></rect>
+
+              <!-- A only = A ที่ไม่เอา B -->
+              <circle id="aOnly" class="region off" cx="255" cy="205" r="125" mask="url(#maskNotB)" clip-path="url(#clipU)"></circle>
+
+              <!-- B only = B ที่ไม่เอา A -->
+              <circle id="bOnly" class="region off" cx="365" cy="205" r="125" mask="url(#maskNotA)" clip-path="url(#clipU)"></circle>
+
+              <!-- A ∩ B = วาดวง A แล้ว clip ด้วยรูปวง B -->
+              <clipPath id="clipB">
+                <circle cx="365" cy="205" r="125"></circle>
+              </clipPath>
+              <circle id="intersect" class="region off" cx="255" cy="205" r="125" clip-path="url(#clipB)"></circle>
+
+              <circle class="circle-outline" cx="255" cy="205" r="125"></circle>
+              <circle class="circle-outline" cx="365" cy="205" r="125"></circle>
+
+              <text class="label" x="178" y="120">A</text>
+              <text class="label" x="425" y="120">B</text>
+              <text class="label" x="535" y="80">U</text>
+            </svg>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-title">เรียงการ์ดคำตอบ</div>
+          <div class="level-badge">ลาก / แตะได้</div>
+        </div>
+
+        <div class="right-panel">
+          <div id="answerZone" class="answer-zone" aria-label="ช่องวางคำตอบ">
+            <span class="answer-placeholder">วางการ์ดที่นี่ เช่น A ∩ B</span>
+          </div>
+
+          <div class="card-bank">
+            <div class="card-bank-title">
+              <span>คลังการ์ด</span>
+              <span style="color:#64748b;font-weight:500;font-size:.88rem;">แตะการ์ดเพื่อใส่คำตอบได้</span>
+            </div>
+            <div id="cardBank" class="cards"></div>
+          </div>
+
+          <div class="controls">
+            <button class="btn btn-primary" onclick="checkAnswer()">ตรวจคำตอบ</button>
+            <button class="btn btn-warning" onclick="showHint()">ขอคำใบ้</button>
+            <button class="btn btn-light" onclick="clearAnswer()">ล้างคำตอบ</button>
+            <button class="btn btn-light" onclick="nextQuestion()">ข้อต่อไป</button>
+          </div>
+
+          <div id="feedback" class="feedback">เริ่มจากดูว่า “พื้นที่แรเงาอยู่ใน A, B หรือทั้งสองเซต” แล้วค่อยเลือกสัญลักษณ์</div>
+
+          <div class="progress">
+            <div id="progressBar" class="progress-bar"></div>
+          </div>
+
+          <div class="teacher-note">
+            <strong>หมายเหตุสำหรับครู:</strong> เวอร์ชันนี้เป็นต้นแบบเกม 2 เซต สามารถเพิ่มด่าน 3 เซต, จับเวลา, เก็บคะแนนลง Google Sheet หรือทำเป็นห้องเรียนแข่งขันได้ภายหลัง
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <div id="celebrate" class="celebrate">
+    <div class="celebrate-card">
+      <div class="emoji">🎉</div>
+      <h2>ถูกต้อง!</h2>
+      <p id="celebrateText">เก่งมาก ไปข้อต่อไปกันเลย</p>
+    </div>
+  </div>
+
+  <script>
+    const questions = [
+      {
+        title: "แรเงาทั้งวง A และวง B รวมกัน",
+        regions: ["aOnly", "intersect", "bOnly"],
+        answer: ["A", "∪", "B"],
+        accepted: ["A∪B", "B∪A"],
+        hint: "ยูเนี่ยน คือ เอาทุกส่วนที่อยู่ใน A หรืออยู่ใน B รวมกัน",
+        explain: "บริเวณนี้คือ A ∪ B เพราะแรเงาทุกส่วนที่อยู่ใน A หรือ B"
+      },
+      {
+        title: "แรเงาเฉพาะส่วนตรงกลางที่ A และ B ซ้อนกัน",
+        regions: ["intersect"],
+        answer: ["A", "∩", "B"],
+        accepted: ["A∩B", "B∩A"],
+        hint: "อินเตอร์เซกชัน คือ ส่วนที่เป็นสมาชิกของทั้ง A และ B พร้อมกัน",
+        explain: "บริเวณนี้คือ A ∩ B เพราะเป็นส่วนร่วมของทั้งสองเซต"
+      },
+      {
+        title: "แรเงาเฉพาะส่วนของ A ที่ไม่ทับกับ B",
+        regions: ["aOnly"],
+        answer: ["A", "−", "B"],
+        accepted: ["A−B", "A∩B′"],
+        hint: "ส่วนนี้อยู่ใน A แต่ไม่อยู่ใน B",
+        explain: "บริเวณนี้คือ A − B หรือเขียนได้อีกแบบว่า A ∩ B′"
+      },
+      {
+        title: "แรเงาเฉพาะส่วนของ B ที่ไม่ทับกับ A",
+        regions: ["bOnly"],
+        answer: ["B", "−", "A"],
+        accepted: ["B−A", "B∩A′"],
+        hint: "ส่วนนี้อยู่ใน B แต่ไม่อยู่ใน A",
+        explain: "บริเวณนี้คือ B − A หรือเขียนได้อีกแบบว่า B ∩ A′"
+      },
+      {
+        title: "แรเงาทุกส่วนที่ไม่อยู่ใน A",
+        regions: ["bOnly", "outside"],
+        answer: ["A", "′"],
+        accepted: ["A′"],
+        hint: "คอมพลีเมนต์ของ A คือ ทุกอย่างใน U ที่ไม่ใช่ A",
+        explain: "บริเวณนี้คือ A′ เพราะเป็นทุกพื้นที่นอกเซต A"
+      },
+      {
+        title: "แรเงาทุกส่วนที่ไม่อยู่ใน B",
+        regions: ["aOnly", "outside"],
+        answer: ["B", "′"],
+        accepted: ["B′"],
+        hint: "คอมพลีเมนต์ของ B คือ ทุกอย่างใน U ที่ไม่ใช่ B",
+        explain: "บริเวณนี้คือ B′ เพราะเป็นทุกพื้นที่นอกเซต B"
+      },
+      {
+        title: "แรเงาเฉพาะพื้นที่นอกวง A และวง B ทั้งหมด",
+        regions: ["outside"],
+        answer: ["(", "A", "∪", "B", ")", "′"],
+        accepted: ["(A∪B)′", "(B∪A)′"],
+        hint: "นอกทั้งสองวง คือ ไม่อยู่ใน A และไม่อยู่ใน B",
+        explain: "บริเวณนี้คือ (A ∪ B)′ เพราะเป็นพื้นที่นอก A และ B ทั้งหมด"
+      },
+      {
+        title: "แรเงาทุกส่วน ยกเว้นตรงกลางที่ A และ B ซ้อนกัน",
+        regions: ["aOnly", "bOnly", "outside"],
+        answer: ["(", "A", "∩", "B", ")", "′"],
+        accepted: ["(A∩B)′", "(B∩A)′"],
+        hint: "แรเงาทุกอย่างที่ไม่ใช่ส่วนร่วมของ A และ B",
+        explain: "บริเวณนี้คือ (A ∩ B)′ เพราะเว้นเฉพาะส่วนที่ A กับ B ซ้อนกัน"
+      }
+    ];
+
+    const cardSymbols = ["A", "B", "∪", "∩", "−", "′", "(", ")"];
+    let currentIndex = 0;
+    let score = 0;
+    let answerCards = [];
+    let draggedSymbol = null;
+    let answeredCorrectlyThisRound = false;
+
+    const regionIds = ["aOnly", "intersect", "bOnly", "outside"];
+    const answerZone = document.getElementById("answerZone");
+    const cardBank = document.getElementById("cardBank");
+    const feedback = document.getElementById("feedback");
+    const progressBar = document.getElementById("progressBar");
+
+    function init() {
+      renderCardBank();
+      loadQuestion();
+      setupDropZone();
+    }
+
+    function renderCardBank() {
+      cardBank.innerHTML = "";
+      cardSymbols.forEach(symbol => {
+        const btn = document.createElement("button");
+        btn.className = "math-card";
+        btn.textContent = symbol;
+        btn.draggable = true;
+        btn.addEventListener("dragstart", () => {
+          draggedSymbol = symbol;
+        });
+        btn.addEventListener("click", () => addCard(symbol));
+        cardBank.appendChild(btn);
+      });
+    }
+
+    function setupDropZone() {
+      answerZone.addEventListener("dragover", (event) => {
+        event.preventDefault();
+        answerZone.classList.add("drag-over");
+      });
+
+      answerZone.addEventListener("dragleave", () => {
+        answerZone.classList.remove("drag-over");
+      });
+
+      answerZone.addEventListener("drop", (event) => {
+        event.preventDefault();
+        answerZone.classList.remove("drag-over");
+        if (draggedSymbol) {
+          addCard(draggedSymbol);
+          draggedSymbol = null;
+        }
+      });
+    }
+
+    function loadQuestion() {
+      const q = questions[currentIndex];
+      answeredCorrectlyThisRound = false;
+      document.getElementById("questionTitle").textContent = q.title;
+      document.getElementById("questionHintSmall").textContent = "เลือกการ์ดให้ตรงกับพื้นที่แรเงา";
+      document.getElementById("levelBadge").textContent = `ด่านที่ ${currentIndex + 1} / ${questions.length}`;
+
+      regionIds.forEach(id => {
+        document.getElementById(id).classList.remove("on");
+        document.getElementById(id).classList.add("off");
+      });
+
+      q.regions.forEach(id => {
+        document.getElementById(id).classList.add("on");
+        document.getElementById(id).classList.remove("off");
+      });
+
+      clearAnswer(false);
+      setFeedback("เริ่มจากดูว่า ‘พื้นที่แรเงาอยู่ใน A, B หรือทั้งสองเซต’ แล้วค่อยเลือกสัญลักษณ์", "");
+      updateProgress();
+    }
+
+    function addCard(symbol) {
+      answerCards.push(symbol);
+      renderAnswer();
+      setFeedback("เรียงเสร็จแล้วกดตรวจคำตอบได้เลย", "");
+    }
+
+    function removeCard(index) {
+      answerCards.splice(index, 1);
+      renderAnswer();
+    }
+
+    function renderAnswer() {
+      answerZone.innerHTML = "";
+
+      if (answerCards.length === 0) {
+        const placeholder = document.createElement("span");
+        placeholder.className = "answer-placeholder";
+        placeholder.textContent = "วางการ์ดที่นี่ เช่น A ∩ B";
+        answerZone.appendChild(placeholder);
+        return;
+      }
+
+      answerCards.forEach((symbol, index) => {
+        const card = document.createElement("button");
+        card.className = "math-card in-answer";
+        card.textContent = symbol;
+        card.title = "คลิกเพื่อลบการ์ดนี้";
+        card.addEventListener("click", () => removeCard(index));
+        answerZone.appendChild(card);
+      });
+    }
+
+    function normalizeAnswer(cards) {
+      return cards.join("").replace(/\s/g, "");
+    }
+
+    function checkAnswer() {
+      const q = questions[currentIndex];
+      const userAnswer = normalizeAnswer(answerCards);
+
+      if (!userAnswer) {
+        setFeedback("ยังไม่ได้วางการ์ดคำตอบ ลองลากการ์ดลงมาก่อนนะครับ", "wrong");
+        return;
+      }
+
+      if (q.accepted.includes(userAnswer)) {
+        if (!answeredCorrectlyThisRound) {
+          score += 10;
+          answeredCorrectlyThisRound = true;
+        }
+        document.getElementById("score").textContent = score;
+        setFeedback("ถูกต้อง! " + q.explain, "correct");
+        showCelebrate(q.answer.join(" "));
+      } else {
+        setFeedback("ยังไม่ถูกครับ ลองสังเกตใหม่ว่าแรเงาอยู่ ‘ในเซตไหน’ และ ‘อยู่นอกเซตไหน’", "wrong");
+      }
+    }
+
+    function showHint() {
+      const q = questions[currentIndex];
+      setFeedback("คำใบ้: " + q.hint, "");
+    }
+
+    function clearAnswer(showMessage = true) {
+      answerCards = [];
+      renderAnswer();
+      if (showMessage) setFeedback("ล้างคำตอบแล้ว ลองเรียงใหม่อีกครั้ง", "");
+    }
+
+    function nextQuestion() {
+      currentIndex = (currentIndex + 1) % questions.length;
+      loadQuestion();
+    }
+
+    function setFeedback(message, type) {
+      feedback.className = "feedback";
+      if (type) feedback.classList.add(type);
+      feedback.textContent = message;
+    }
+
+    function updateProgress() {
+      const percent = ((currentIndex + 1) / questions.length) * 100;
+      progressBar.style.width = percent + "%";
+    }
+
+    function showCelebrate(answerText) {
+      const celebrate = document.getElementById("celebrate");
+      document.getElementById("celebrateText").textContent = `คำตอบคือ ${answerText}`;
+      celebrate.classList.add("show");
+      setTimeout(() => celebrate.classList.remove("show"), 1200);
+    }
+
+    init();
+  </script>
+</body>
+</html>
