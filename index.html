@@ -270,7 +270,47 @@ function saveProgress(force=false){if(!force&&(!$('startScreen')||$('startScreen
 function clearSavedProgress(){try{localStorage.removeItem(SAVE_KEY)}catch(e){}clearProgressFromIDB();updateContinueButton()}
 async function updateContinueButton(){const btn=$('continueBtn');if(!btn)return;const data=await getSavedProgressAsync();if(data&&Number.isFinite(Number(data.currentIndex))){btn.style.display='block';btn.textContent=`เล่นต่อ ด่านที่ ${Number(data.currentIndex)+1}`}else{btn.style.display='none'}}
 
-function init(){loadQuestion();updateModeUI();updateContinueButton();if($('startVersion'))$('startVersion').textContent=APP_VERSION}
+function nudgeIOSPWAViewport() {
+  const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || 
+                (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+
+  const isStandalone =
+    window.navigator.standalone === true ||
+    window.matchMedia('(display-mode: standalone)').matches;
+
+  if (!isIOS || !isStandalone) return;
+
+  const nudge = () => {
+    // ให้ body สูงกว่าจอชั่วคราว เพื่อให้ scroll ได้จริง
+    document.documentElement.style.minHeight = 'calc(100vh + 2px)';
+    document.body.style.minHeight = 'calc(100vh + 2px)';
+
+    window.scrollTo(0, 1);
+
+    setTimeout(() => {
+      window.scrollTo(0, 0);
+      document.documentElement.style.minHeight = '';
+      document.body.style.minHeight = '';
+    }, 80);
+  };
+
+  setTimeout(nudge, 80);
+  setTimeout(nudge, 300);
+  setTimeout(nudge, 700);
+}    
+
+    
+function init(){
+  nudgeIOSPWAViewport();
+
+  loadQuestion();
+  updateModeUI();
+  updateContinueButton();
+
+  if ($('startVersion')) {
+    $('startVersion').textContent = APP_VERSION;
+  }
+}
 function selectMode(mode){gameMode=mode;updateModeUI()}
 function updateModeUI(){if($('easyModeBtn'))$('easyModeBtn').classList.toggle('active',gameMode==='easy');if($('hardModeBtn'))$('hardModeBtn').classList.toggle('active',gameMode==='hard');$('modeLabel').textContent=gameMode==='easy'?'โหมดฝึกหัด':'โหมดท้าทาย'}
 function startGame(){currentIndex=0;score=0;combo=1;lives=START_LIVES;correctStreak=0;answerCards=[];clearSavedProgress();$('startScreen').classList.remove('show');loadQuestion();updateUI();saveProgress(true)}
