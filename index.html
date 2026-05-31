@@ -4,455 +4,112 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <meta name="theme-color" content="#2563eb" />
-  <title>Venn Quest | เกมเซต Mobile Pro</title>
+  <title>Venn Quest | Mobile Pro v2</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
     :root{
-      --bg:#edf5ff;
-      --bg2:#f5f0ff;
-      --ink:#0f172a;
-      --muted:#64748b;
-      --primary:#2563eb;
-      --primary2:#7c3aed;
-      --good:#16a34a;
-      --bad:#dc2626;
-      --warn:#f59e0b;
-      --card:#ffffff;
-      --soft:#f8fafc;
-      --line:rgba(148,163,184,.38);
-      --shadow:0 18px 45px rgba(37,99,235,.16);
-      --radius:26px;
-      --bottom-h:255px;
+      --bg:#edf5ff; --bg2:#f5f0ff; --ink:#0f172a; --muted:#64748b;
+      --primary:#2563eb; --primary2:#7c3aed; --good:#16a34a; --bad:#dc2626; --warn:#f59e0b;
+      --card:#fff; --soft:#f8fafc; --line:rgba(148,163,184,.38);
+      --shadow:0 18px 45px rgba(37,99,235,.16); --bottom-h:238px;
     }
-
     *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
     html,body{height:100%}
     body{
-      margin:0;
-      font-family:"Kanit",system-ui,sans-serif;
-      color:var(--ink);
-      background:
-        radial-gradient(circle at 15% 0%,rgba(37,99,235,.22),transparent 32%),
-        radial-gradient(circle at 90% 8%,rgba(124,58,237,.20),transparent 34%),
-        linear-gradient(135deg,var(--bg),var(--bg2));
-      overflow:hidden;
+      margin:0;font-family:"Kanit",system-ui,sans-serif;color:var(--ink);overflow:hidden;
+      background:radial-gradient(circle at 15% 0%,rgba(37,99,235,.22),transparent 32%),radial-gradient(circle at 90% 8%,rgba(124,58,237,.20),transparent 34%),linear-gradient(135deg,var(--bg),var(--bg2));
     }
-
-    .app{
-      height:100dvh;
-      display:flex;
-      flex-direction:column;
-      max-width:560px;
-      margin:0 auto;
-      position:relative;
-      background:rgba(255,255,255,.12);
-    }
-
-    .topbar{
-      padding:calc(10px + env(safe-area-inset-top)) 14px 10px;
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:10px;
-      flex:0 0 auto;
-    }
-
-    .brand{display:flex;align-items:center;gap:10px;min-width:0}
-    .logo{
-      width:42px;height:42px;border-radius:16px;
-      display:grid;place-items:center;
-      color:#fff;font-weight:800;font-size:1.16rem;
-      background:linear-gradient(135deg,var(--primary),var(--primary2));
-      box-shadow:0 12px 28px rgba(37,99,235,.28);
-      flex:0 0 auto;
-    }
-    .brand-text{min-width:0}
-    .brand-title{font-size:1.05rem;font-weight:800;line-height:1.05;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-    .brand-sub{font-size:.78rem;color:var(--muted);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-
-    .scorebox{
-      display:flex;align-items:center;gap:7px;
-      background:rgba(255,255,255,.82);
-      border:1px solid var(--line);
-      border-radius:999px;
-      padding:7px 10px;
-      box-shadow:0 10px 26px rgba(15,23,42,.08);
-      white-space:nowrap;
-      font-weight:800;
-    }
-    .scorebox span{color:var(--primary)}
-
-    .progress-wrap{padding:0 14px 8px;flex:0 0 auto}
-    .progress-meta{display:flex;justify-content:space-between;align-items:center;color:var(--muted);font-size:.78rem;margin-bottom:6px;font-weight:600}
-    .progress{height:10px;background:rgba(226,232,240,.95);border-radius:999px;overflow:hidden;border:1px solid rgba(255,255,255,.75)}
-    .progress-bar{height:100%;width:0%;background:linear-gradient(90deg,var(--primary),var(--primary2));border-radius:999px;transition:.25s ease}
-
-    .game-scroll{
-      flex:1 1 auto;
-      overflow:auto;
-      padding:0 14px calc(var(--bottom-h) + 18px);
-      overscroll-behavior:contain;
-    }
-    .game-scroll::-webkit-scrollbar{display:none}
-
-    .question-card{
-      background:rgba(255,255,255,.86);
-      border:1px solid var(--line);
-      border-radius:24px;
-      padding:13px 14px;
-      box-shadow:0 14px 34px rgba(15,23,42,.08);
-      backdrop-filter:blur(14px);
-      margin-bottom:10px;
-    }
-    .question-top{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:7px}
-    .tag{
-      display:inline-flex;align-items:center;gap:5px;
-      border-radius:999px;
-      background:#eff6ff;color:#1d4ed8;
-      padding:6px 10px;font-weight:800;font-size:.78rem;
-    }
-    .life{display:flex;gap:3px;font-size:1rem}
-    .question-title{font-size:1.02rem;font-weight:800;line-height:1.35;margin:0}
-    .question-help{font-size:.84rem;color:var(--muted);margin-top:4px}
-
-    .venn-card{
-      background:rgba(255,255,255,.88);
-      border:1px solid var(--line);
-      border-radius:28px;
-      min-height:310px;
-      display:grid;
-      place-items:center;
-      padding:10px;
-      box-shadow:var(--shadow);
-      position:relative;
-      overflow:hidden;
-    }
-    .venn-card::before{
-      content:"";position:absolute;inset:0;
-      background:repeating-linear-gradient(45deg,rgba(37,99,235,.035) 0 10px,transparent 10px 20px);
-      pointer-events:none;
-    }
-    svg{width:100%;max-width:480px;height:auto;position:relative;z-index:1;display:block}
-    .universe{fill:#fff;stroke:#475569;stroke-width:2.5}
-    .region{stroke:none;transition:fill .22s ease,opacity .22s ease}
-    .region.on{fill:rgba(37,99,235,.62)}
-    .region.off{fill:rgba(226,232,240,.84)}
-    .circle-outline{fill:none;stroke:rgba(15,23,42,.76);stroke-width:3}
-    .label{font-size:31px;font-weight:800;fill:#0f172a}
-
-    .answer-card{
-      background:rgba(255,255,255,.88);
-      border:1px solid var(--line);
-      border-radius:24px;
-      padding:12px;
-      box-shadow:0 14px 34px rgba(15,23,42,.08);
-      margin-top:10px;
-      backdrop-filter:blur(14px);
-    }
-    .answer-head{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:9px}
-    .answer-title{font-weight:800;font-size:.96rem}
-    .mini-btn{
-      border:none;border-radius:999px;background:#f1f5f9;color:#334155;
-      padding:7px 10px;font-family:"Kanit";font-weight:800;font-size:.78rem;cursor:pointer;
-    }
-    .answer-zone{
-      min-height:72px;
-      border:2px dashed rgba(37,99,235,.34);
-      background:#eff6ff;
-      border-radius:20px;
-      padding:10px;
-      display:flex;align-items:center;flex-wrap:wrap;gap:8px;
-    }
-    .placeholder{color:#64748b;font-size:.9rem}
-
-    .math-card{
-      border:1px solid rgba(148,163,184,.28);
-      min-width:50px;height:48px;padding:0 13px;border-radius:16px;
-      background:#fff;color:#0f172a;
-      font-family:"Times New Roman","Cambria Math","STIX Two Math",serif;
-      font-size:1.32rem;font-weight:800;
-      box-shadow:0 9px 19px rgba(15,23,42,.10);
-      cursor:pointer;touch-action:manipulation;
-      display:inline-grid;place-items:center;
-      transition:transform .1s ease,box-shadow .1s ease,background .1s ease;
-    }
-    .math-card:active{transform:scale(.94);box-shadow:0 5px 12px rgba(15,23,42,.10)}
-    .math-card.in-answer{background:#fff7ed;border-color:rgba(245,158,11,.45)}
-
-    .feedback{
-      margin-top:10px;
-      padding:10px 12px;
-      min-height:48px;
-      border-radius:18px;
-      border:1px solid var(--line);
-      background:#f8fafc;
-      color:#475569;
-      font-size:.9rem;
-      line-height:1.35;
-    }
-    .feedback.good{background:#ecfdf5;border-color:rgba(22,163,74,.26);color:#166534}
-    .feedback.bad{background:#fef2f2;border-color:rgba(220,38,38,.24);color:#991b1b}
-
-    .bottom-sheet{
-      position:absolute;left:0;right:0;bottom:0;
-      height:var(--bottom-h);
-      padding:10px 14px calc(12px + env(safe-area-inset-bottom));
-      background:rgba(255,255,255,.84);
-      backdrop-filter:blur(20px);
-      border-top:1px solid rgba(148,163,184,.38);
-      box-shadow:0 -18px 45px rgba(15,23,42,.12);
-      border-radius:28px 28px 0 0;
-      z-index:5;
-    }
-    .sheet-handle{width:48px;height:5px;background:#cbd5e1;border-radius:999px;margin:0 auto 9px}
-    .sheet-title{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:8px}
-    .sheet-title strong{font-size:.96rem}
-    .sheet-title span{font-size:.78rem;color:var(--muted);font-weight:600}
-    .card-bank{display:flex;flex-wrap:wrap;gap:8px;max-height:107px;overflow:auto;padding-bottom:2px}
-    .card-bank::-webkit-scrollbar{display:none}
-
-    .actions{display:grid;grid-template-columns:1.2fr .9fr .9fr;gap:8px;margin-top:10px}
-    .btn{
-      border:none;border-radius:17px;min-height:48px;padding:9px 10px;
-      font-family:"Kanit";font-size:.92rem;font-weight:800;cursor:pointer;
-      touch-action:manipulation;
-      transition:transform .1s ease,filter .1s ease;
-    }
-    .btn:active{transform:scale(.97)}
-    .btn-primary{background:linear-gradient(135deg,var(--primary),var(--primary2));color:white;box-shadow:0 12px 24px rgba(37,99,235,.22)}
-    .btn-warn{background:#fffbeb;color:#92400e;border:1px solid rgba(245,158,11,.26)}
-    .btn-light{background:#f8fafc;color:#334155;border:1px solid var(--line)}
-
-    .overlay{
-      position:absolute;inset:0;z-index:20;display:none;place-items:center;
-      background:rgba(15,23,42,.28);backdrop-filter:blur(8px);padding:18px;
-    }
-    .overlay.show{display:grid;animation:fadeIn .18s ease}
-    .modal{
-      width:min(100%,380px);background:#fff;border-radius:30px;padding:22px;text-align:center;
-      box-shadow:0 30px 80px rgba(15,23,42,.24);animation:pop .32s ease;
-    }
-    .modal-emoji{font-size:3.4rem;line-height:1}
-    .modal h2{margin:8px 0 4px;font-size:1.55rem}
-    .modal p{margin:0;color:#64748b;line-height:1.45}
-    .modal .btn{margin-top:16px;width:100%}
-
-    .confetti{position:absolute;inset:0;pointer-events:none;overflow:hidden}
-    .confetti i{position:absolute;width:9px;height:16px;border-radius:4px;top:-20px;animation:fall 1.4s linear forwards;background:var(--primary)}
-
-    @keyframes fadeIn{from{opacity:0}to{opacity:1}}
-    @keyframes pop{from{transform:scale(.88) translateY(14px);opacity:.4}to{transform:scale(1) translateY(0);opacity:1}}
-    @keyframes fall{to{transform:translateY(105dvh) rotate(420deg);opacity:.95}}
-
-    @media (min-width:720px){
-      body{overflow:auto;padding:16px}
-      .app{height:auto;min-height:calc(100dvh - 32px);border-radius:36px;overflow:hidden;box-shadow:0 30px 90px rgba(15,23,42,.14)}
-      .game-scroll{padding-bottom:calc(var(--bottom-h) + 18px)}
-    }
-
-    @media (max-width:390px){
-      :root{--bottom-h:268px}
-      .venn-card{min-height:285px}
-      .math-card{min-width:46px;height:45px;font-size:1.22rem;border-radius:15px}
-      .actions{grid-template-columns:1fr 1fr}
-      .btn-primary{grid-column:1 / -1}
-    }
+    .app{height:100dvh;display:flex;flex-direction:column;max-width:560px;margin:0 auto;position:relative;background:rgba(255,255,255,.12)}
+    .topbar{padding:calc(10px + env(safe-area-inset-top)) 14px 10px;display:flex;align-items:center;justify-content:space-between;gap:10px;flex:0 0 auto}
+    .brand{display:flex;align-items:center;gap:10px;min-width:0}.logo{width:42px;height:42px;border-radius:16px;display:grid;place-items:center;color:#fff;font-weight:800;font-size:1.16rem;background:linear-gradient(135deg,var(--primary),var(--primary2));box-shadow:0 12px 28px rgba(37,99,235,.28);flex:0 0 auto}.brand-text{min-width:0}.brand-title{font-size:1.05rem;font-weight:800;line-height:1.05;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.brand-sub{font-size:.78rem;color:var(--muted);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .score-life{display:flex;align-items:center;gap:6px;flex:0 0 auto}.scorebox{display:flex;align-items:center;gap:5px;background:rgba(255,255,255,.84);border:1px solid var(--line);border-radius:999px;padding:7px 9px;box-shadow:0 10px 26px rgba(15,23,42,.08);white-space:nowrap;font-weight:800;font-size:.94rem}.scorebox span{color:var(--primary)}.life-box span{color:inherit;font-size:.92rem;letter-spacing:-2px}
+    .progress-wrap{padding:0 14px 8px;flex:0 0 auto}.progress-meta{display:flex;justify-content:space-between;align-items:center;color:var(--muted);font-size:.78rem;margin-bottom:6px;font-weight:600}.progress{height:10px;background:rgba(226,232,240,.95);border-radius:999px;overflow:hidden;border:1px solid rgba(255,255,255,.75)}.progress-bar{height:100%;width:0%;background:linear-gradient(90deg,var(--primary),var(--primary2));border-radius:999px;transition:.25s ease}
+    .game-scroll{flex:1 1 auto;overflow:auto;padding:0 14px calc(var(--bottom-h) + 18px);overscroll-behavior:contain}.game-scroll::-webkit-scrollbar{display:none}
+    .venn-card{background:rgba(255,255,255,.88);border:1px solid var(--line);border-radius:28px;min-height:342px;display:grid;place-items:center;padding:10px;box-shadow:var(--shadow);position:relative;overflow:hidden}.venn-card:before{content:"";position:absolute;inset:0;background:repeating-linear-gradient(45deg,rgba(37,99,235,.035) 0 10px,transparent 10px 20px);pointer-events:none}svg{width:100%;max-width:500px;height:auto;position:relative;z-index:1;display:block}.universe{fill:#fff;stroke:#475569;stroke-width:2.5}.region{stroke:none;transition:fill .22s ease,opacity .22s ease}.region.on{fill:rgba(37,99,235,.62)}.region.off{fill:rgba(226,232,240,.84)}.circle-outline{fill:none;stroke:rgba(15,23,42,.76);stroke-width:3}.label{font-size:31px;font-weight:800;fill:#0f172a}
+    .answer-card{background:rgba(255,255,255,.88);border:1px solid var(--line);border-radius:24px;padding:12px;box-shadow:0 14px 34px rgba(15,23,42,.08);margin-top:10px;backdrop-filter:blur(14px)}.answer-head{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:9px}.answer-title{font-weight:800;font-size:.96rem}.mini-btn{border:none;border-radius:999px;background:#f1f5f9;color:#334155;padding:7px 10px;font-family:"Kanit";font-weight:800;font-size:.78rem;cursor:pointer}.answer-zone{min-height:72px;border:2px dashed rgba(37,99,235,.34);background:#eff6ff;border-radius:20px;padding:10px;display:flex;align-items:center;flex-wrap:wrap;gap:8px}.placeholder{color:#64748b;font-size:.9rem}
+    .math-card{border:1px solid rgba(148,163,184,.28);min-width:50px;height:48px;padding:0 13px;border-radius:16px;background:#fff;color:#0f172a;font-family:"Times New Roman","Cambria Math","STIX Two Math",serif;font-size:1.32rem;font-weight:800;box-shadow:0 9px 19px rgba(15,23,42,.10);cursor:pointer;touch-action:manipulation;display:inline-grid;place-items:center;transition:transform .1s ease,box-shadow .1s ease,background .1s ease}.math-card:active{transform:scale(.94);box-shadow:0 5px 12px rgba(15,23,42,.10)}.math-card.in-answer{background:#fff7ed;border-color:rgba(245,158,11,.45)}
+    .feedback{margin-top:10px;padding:10px 12px;min-height:46px;border-radius:18px;border:1px solid var(--line);background:#f8fafc;color:#475569;font-size:.9rem;line-height:1.35}.feedback.good{background:#ecfdf5;border-color:rgba(22,163,74,.26);color:#166534}.feedback.bad{background:#fef2f2;border-color:rgba(220,38,38,.24);color:#991b1b}
+    .bottom-sheet{position:absolute;left:0;right:0;bottom:0;height:var(--bottom-h);padding:10px 14px calc(12px + env(safe-area-inset-bottom));background:rgba(255,255,255,.84);backdrop-filter:blur(20px);border-top:1px solid rgba(148,163,184,.38);box-shadow:0 -18px 45px rgba(15,23,42,.12);border-radius:28px 28px 0 0;z-index:5}.sheet-handle{width:48px;height:5px;background:#cbd5e1;border-radius:999px;margin:0 auto 9px}.sheet-title{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:8px}.sheet-title strong{font-size:.96rem}.sheet-title span{font-size:.78rem;color:var(--muted);font-weight:600}.card-bank{display:flex;flex-wrap:wrap;gap:8px;max-height:96px;overflow:auto;padding-bottom:2px}.card-bank::-webkit-scrollbar{display:none}.actions{display:grid;grid-template-columns:1fr;gap:8px;margin-top:10px}.btn{border:none;border-radius:17px;min-height:50px;padding:9px 10px;font-family:"Kanit";font-size:.96rem;font-weight:800;cursor:pointer;touch-action:manipulation;transition:transform .1s ease,filter .1s ease}.btn:active{transform:scale(.97)}.btn-primary{background:linear-gradient(135deg,var(--primary),var(--primary2));color:white;box-shadow:0 12px 24px rgba(37,99,235,.22)}
+    .overlay,.start-screen{position:absolute;inset:0;z-index:20;display:none;place-items:center;background:rgba(15,23,42,.28);backdrop-filter:blur(8px);padding:18px}.overlay.show,.start-screen.show{display:grid;animation:fadeIn .18s ease}.modal,.start-card{width:min(100%,390px);background:#fff;border-radius:30px;padding:22px;text-align:center;box-shadow:0 30px 80px rgba(15,23,42,.24);animation:pop .32s ease}.modal-emoji,.start-logo{font-size:3.4rem;line-height:1}.start-logo{width:76px;height:76px;border-radius:26px;margin:0 auto 10px;display:grid;place-items:center;color:#fff;background:linear-gradient(135deg,var(--primary),var(--primary2));font-weight:800;box-shadow:0 18px 36px rgba(37,99,235,.25)}.modal h2,.start-card h1{margin:8px 0 4px;font-size:1.55rem}.modal p,.start-card p{margin:0;color:#64748b;line-height:1.45}.modal .btn,.start-btn{margin-top:16px;width:100%}.mode-grid{display:grid;grid-template-columns:1fr;gap:10px;margin-top:18px}.mode-card{border:2px solid var(--line);border-radius:20px;background:#f8fafc;padding:13px;text-align:left;font-family:"Kanit";cursor:pointer}.mode-card strong{display:block;font-size:1rem;color:#0f172a}.mode-card span{display:block;font-size:.84rem;color:#64748b;margin-top:3px}.mode-card.active{border-color:rgba(37,99,235,.75);background:#eff6ff;box-shadow:0 12px 25px rgba(37,99,235,.12)}
+    .confetti{position:absolute;inset:0;pointer-events:none;overflow:hidden}.confetti i{position:absolute;width:9px;height:16px;border-radius:4px;top:-20px;animation:fall 1.4s linear forwards;background:var(--primary)}
+    @keyframes fadeIn{from{opacity:0}to{opacity:1}}@keyframes pop{from{transform:scale(.88) translateY(14px);opacity:.4}to{transform:scale(1) translateY(0);opacity:1}}@keyframes fall{to{transform:translateY(105dvh) rotate(420deg);opacity:.95}}
+    @media (min-width:720px){body{overflow:auto;padding:16px}.app{height:auto;min-height:calc(100dvh - 32px);border-radius:36px;overflow:hidden;box-shadow:0 30px 90px rgba(15,23,42,.14)}.game-scroll{padding-bottom:calc(var(--bottom-h) + 18px)}}
+    @media (max-width:390px){:root{--bottom-h:250px}.venn-card{min-height:312px}.math-card{min-width:46px;height:45px;font-size:1.22rem;border-radius:15px}.life-box span{font-size:.82rem}.scorebox{padding:7px 8px}}
   </style>
 </head>
 <body>
   <main class="app">
-    <header class="topbar">
-      <div class="brand">
-        <div class="logo">∩</div>
-        <div class="brand-text">
-          <div class="brand-title">Venn Quest</div>
-          <div class="brand-sub">เกมเรียงการ์ดเซต</div>
+    <section id="startScreen" class="start-screen show">
+      <div class="start-card">
+        <div class="start-logo">∩</div><h1>Venn Quest</h1><p>เกมเรียงการ์ดเซตบนมือถือ ดูภาพแรเงา แล้วแตะการ์ดให้เป็นนิพจน์ที่ถูกต้อง</p>
+        <div class="mode-grid">
+          <button id="easyModeBtn" class="mode-card active" onclick="selectMode('easy')"><strong>โหมดง่าย</strong><span>หัวใจหมด เติมใหม่และลองข้อเดิม</span></button>
+          <button id="hardModeBtn" class="mode-card" onclick="selectMode('hard')"><strong>โหมดยาก</strong><span>หัวใจหมด Game Over</span></button>
         </div>
+        <button class="btn btn-primary start-btn" onclick="startGame()">เริ่มเกม</button>
       </div>
-      <div class="scorebox">⭐ <span id="score">0</span></div>
+    </section>
+
+    <header class="topbar">
+      <div class="brand"><div class="logo">∩</div><div class="brand-text"><div class="brand-title">Venn Quest</div><div class="brand-sub" id="modeLabel">โหมดง่าย</div></div></div>
+      <div class="score-life"><div class="scorebox">⭐ <span id="score">0</span></div><div class="scorebox life-box"><span id="lifeText">❤️❤️❤️</span></div></div>
     </header>
 
-    <div class="progress-wrap">
-      <div class="progress-meta">
-        <span id="levelText">ด่านที่ 1 / 8</span>
-        <span id="comboText">Combo x1</span>
-      </div>
-      <div class="progress"><div id="progressBar" class="progress-bar"></div></div>
-    </div>
+    <div class="progress-wrap"><div class="progress-meta"><span id="levelText">ด่านที่ 1 / 8</span><span id="comboText">Combo x1</span></div><div class="progress"><div id="progressBar" class="progress-bar"></div></div></div>
 
     <section class="game-scroll">
-      <article class="question-card">
-        <div class="question-top">
-          <div class="tag">🎯 ภารกิจ</div>
-          <div class="life" id="lifeText">❤️❤️❤️</div>
-        </div>
-        <h1 class="question-title" id="questionTitle">บริเวณที่แรเงาแทนเซตใด?</h1>
-        <div class="question-help" id="questionHintSmall">แตะการ์ดด้านล่างเพื่อเรียงคำตอบ</div>
-      </article>
-
       <article class="venn-card">
         <svg viewBox="0 0 620 400" role="img" aria-label="แผนภาพเวนน์ 2 เซต">
-          <defs>
-            <clipPath id="clipU"><rect x="58" y="42" width="504" height="310" rx="26"></rect></clipPath>
-            <mask id="maskNotA"><rect x="0" y="0" width="620" height="400" fill="white"></rect><circle cx="255" cy="205" r="125" fill="black"></circle></mask>
-            <mask id="maskNotB"><rect x="0" y="0" width="620" height="400" fill="white"></rect><circle cx="365" cy="205" r="125" fill="black"></circle></mask>
-            <mask id="maskOutsideAB"><rect x="0" y="0" width="620" height="400" fill="white"></rect><circle cx="255" cy="205" r="125" fill="black"></circle><circle cx="365" cy="205" r="125" fill="black"></circle></mask>
-            <clipPath id="clipB"><circle cx="365" cy="205" r="125"></circle></clipPath>
-          </defs>
-
-          <rect class="universe" x="58" y="42" width="504" height="310" rx="26"></rect>
-          <rect id="outside" class="region off" x="58" y="42" width="504" height="310" rx="26" mask="url(#maskOutsideAB)"></rect>
-          <circle id="aOnly" class="region off" cx="255" cy="205" r="125" mask="url(#maskNotB)" clip-path="url(#clipU)"></circle>
-          <circle id="bOnly" class="region off" cx="365" cy="205" r="125" mask="url(#maskNotA)" clip-path="url(#clipU)"></circle>
-          <circle id="intersect" class="region off" cx="255" cy="205" r="125" clip-path="url(#clipB)"></circle>
-          <circle class="circle-outline" cx="255" cy="205" r="125"></circle>
-          <circle class="circle-outline" cx="365" cy="205" r="125"></circle>
-          <text class="label" x="178" y="120">A</text>
-          <text class="label" x="425" y="120">B</text>
-          <text class="label" x="535" y="80">U</text>
+          <defs><clipPath id="clipU"><rect x="58" y="42" width="504" height="310" rx="26"></rect></clipPath><mask id="maskNotA"><rect x="0" y="0" width="620" height="400" fill="white"></rect><circle cx="255" cy="205" r="125" fill="black"></circle></mask><mask id="maskNotB"><rect x="0" y="0" width="620" height="400" fill="white"></rect><circle cx="365" cy="205" r="125" fill="black"></circle></mask><mask id="maskOutsideAB"><rect x="0" y="0" width="620" height="400" fill="white"></rect><circle cx="255" cy="205" r="125" fill="black"></circle><circle cx="365" cy="205" r="125" fill="black"></circle></mask><clipPath id="clipB"><circle cx="365" cy="205" r="125"></circle></clipPath></defs>
+          <rect class="universe" x="58" y="42" width="504" height="310" rx="26"></rect><rect id="outside" class="region off" x="58" y="42" width="504" height="310" rx="26" mask="url(#maskOutsideAB)"></rect><circle id="aOnly" class="region off" cx="255" cy="205" r="125" mask="url(#maskNotB)" clip-path="url(#clipU)"></circle><circle id="bOnly" class="region off" cx="365" cy="205" r="125" mask="url(#maskNotA)" clip-path="url(#clipU)"></circle><circle id="intersect" class="region off" cx="255" cy="205" r="125" clip-path="url(#clipB)"></circle><circle class="circle-outline" cx="255" cy="205" r="125"></circle><circle class="circle-outline" cx="365" cy="205" r="125"></circle><text class="label" x="178" y="120">A</text><text class="label" x="425" y="120">B</text><text class="label" x="535" y="80">U</text>
         </svg>
       </article>
-
-      <article class="answer-card">
-        <div class="answer-head">
-          <div class="answer-title">คำตอบของฉัน</div>
-          <button class="mini-btn" onclick="clearAnswer()">ล้าง</button>
-        </div>
-        <div id="answerZone" class="answer-zone"><span class="placeholder">แตะการ์ดด้านล่าง เช่น A ∩ B</span></div>
-        <div id="feedback" class="feedback">ดูพื้นที่แรเงาก่อนว่า “อยู่ใน A”, “อยู่ใน B” หรือ “อยู่นอกวง”</div>
-      </article>
+      <article class="answer-card"><div class="answer-head"><div class="answer-title">คำตอบของฉัน</div><button class="mini-btn" onclick="clearAnswer()">ล้าง</button></div><div id="answerZone" class="answer-zone"><span class="placeholder">แตะการ์ดด้านล่าง เช่น A ∩ B</span></div><div id="feedback" class="feedback">แตะการ์ดด้านล่างเพื่อเรียงคำตอบ แล้วกดส่งคำตอบ</div></article>
     </section>
 
-    <section class="bottom-sheet">
-      <div class="sheet-handle"></div>
-      <div class="sheet-title">
-        <strong>คลังการ์ด</strong>
-        <span>แตะเพื่อเพิ่ม • แตะการ์ดคำตอบเพื่อลบ</span>
-      </div>
-      <div id="cardBank" class="card-bank"></div>
-      <div class="actions">
-        <button class="btn btn-primary" onclick="checkAnswer()">ตรวจคำตอบ</button>
-        <button class="btn btn-warn" onclick="showHint()">คำใบ้</button>
-        <button class="btn btn-light" onclick="nextQuestion()">ข้อต่อไป</button>
-      </div>
-    </section>
+    <section class="bottom-sheet"><div class="sheet-handle"></div><div class="sheet-title"><strong>คลังการ์ด</strong><span>แตะเพื่อเพิ่ม • แตะคำตอบเพื่อลบ</span></div><div id="cardBank" class="card-bank"></div><div class="actions"><button class="btn btn-primary" onclick="checkAnswer()">ส่งคำตอบ</button></div></section>
 
-    <div id="overlay" class="overlay">
-      <div class="confetti" id="confetti"></div>
-      <div class="modal">
-        <div class="modal-emoji" id="modalEmoji">🎉</div>
-        <h2 id="modalTitle">ถูกต้อง!</h2>
-        <p id="modalText">เก่งมาก</p>
-        <button class="btn btn-primary" onclick="closeOverlayAndNext()">ไปด่านต่อไป</button>
-      </div>
-    </div>
+    <div id="overlay" class="overlay"><div class="confetti" id="confetti"></div><div class="modal"><div class="modal-emoji" id="modalEmoji">🎉</div><h2 id="modalTitle">ถูกต้อง!</h2><p id="modalText">เก่งมาก</p><button id="modalButton" class="btn btn-primary" onclick="handleModalButton()">เริ่มใหม่</button></div></div>
   </main>
 
   <script>
-    const questions = [
-      {title:"แรเงาทั้งวง A และวง B รวมกัน",regions:["aOnly","intersect","bOnly"],answer:["A","∪","B"],accepted:["A∪B","B∪A"],hint:"ยูเนี่ยน คือ เอาทุกส่วนที่อยู่ใน A หรืออยู่ใน B รวมกัน",explain:"A ∪ B คือทุกส่วนที่อยู่ใน A หรือ B"},
-      {title:"แรเงาเฉพาะส่วนตรงกลางที่ A และ B ซ้อนกัน",regions:["intersect"],answer:["A","∩","B"],accepted:["A∩B","B∩A"],hint:"อินเตอร์เซกชัน คือ ส่วนที่อยู่ในทั้ง A และ B พร้อมกัน",explain:"A ∩ B คือส่วนร่วมของทั้งสองเซต"},
-      {title:"แรเงาเฉพาะส่วนของ A ที่ไม่ทับกับ B",regions:["aOnly"],answer:["A","−","B"],accepted:["A−B","A∩B′"],hint:"ส่วนนี้อยู่ใน A แต่ไม่อยู่ใน B",explain:"A − B คืออยู่ใน A แต่ไม่อยู่ใน B"},
-      {title:"แรเงาเฉพาะส่วนของ B ที่ไม่ทับกับ A",regions:["bOnly"],answer:["B","−","A"],accepted:["B−A","B∩A′"],hint:"ส่วนนี้อยู่ใน B แต่ไม่อยู่ใน A",explain:"B − A คืออยู่ใน B แต่ไม่อยู่ใน A"},
-      {title:"แรเงาทุกส่วนที่ไม่อยู่ใน A",regions:["bOnly","outside"],answer:["A","′"],accepted:["A′"],hint:"A′ คือทุกอย่างใน U ที่ไม่ใช่ A",explain:"A′ คือพื้นที่นอกเซต A ทั้งหมด"},
-      {title:"แรเงาทุกส่วนที่ไม่อยู่ใน B",regions:["aOnly","outside"],answer:["B","′"],accepted:["B′"],hint:"B′ คือทุกอย่างใน U ที่ไม่ใช่ B",explain:"B′ คือพื้นที่นอกเซต B ทั้งหมด"},
-      {title:"แรเงาเฉพาะพื้นที่นอกวง A และวง B ทั้งหมด",regions:["outside"],answer:["(","A","∪","B",")","′"],accepted:["(A∪B)′","(B∪A)′"],hint:"นอกทั้งสองวง คือไม่อยู่ใน A และไม่อยู่ใน B",explain:"(A ∪ B)′ คือพื้นที่นอก A และ B ทั้งหมด"},
-      {title:"แรเงาทุกส่วน ยกเว้นตรงกลางที่ A และ B ซ้อนกัน",regions:["aOnly","bOnly","outside"],answer:["(","A","∩","B",")","′"],accepted:["(A∩B)′","(B∩A)′"],hint:"แรเงาทุกอย่างที่ไม่ใช่ส่วนร่วมของ A และ B",explain:"(A ∩ B)′ คือทุกส่วนที่ไม่ใช่ส่วนร่วม"}
+    const questions=[
+      {regions:["aOnly","intersect","bOnly"],answer:["A","∪","B"],accepted:["A∪B","B∪A"],explain:"A ∪ B คือทุกส่วนที่อยู่ใน A หรือ B"},
+      {regions:["intersect"],answer:["A","∩","B"],accepted:["A∩B","B∩A"],explain:"A ∩ B คือส่วนร่วมของทั้งสองเซต"},
+      {regions:["aOnly"],answer:["A","−","B"],accepted:["A−B","A∩B′"],explain:"A − B คืออยู่ใน A แต่ไม่อยู่ใน B"},
+      {regions:["bOnly"],answer:["B","−","A"],accepted:["B−A","B∩A′"],explain:"B − A คืออยู่ใน B แต่ไม่อยู่ใน A"},
+      {regions:["bOnly","outside"],answer:["A","′"],accepted:["A′"],explain:"A′ คือพื้นที่นอกเซต A ทั้งหมด"},
+      {regions:["aOnly","outside"],answer:["B","′"],accepted:["B′"],explain:"B′ คือพื้นที่นอกเซต B ทั้งหมด"},
+      {regions:["outside"],answer:["(","A","∪","B",")","′"],accepted:["(A∪B)′","(B∪A)′"],explain:"(A ∪ B)′ คือพื้นที่นอก A และ B ทั้งหมด"},
+      {regions:["aOnly","bOnly","outside"],answer:["(","A","∩","B",")","′"],accepted:["(A∩B)′","(B∩A)′"],explain:"(A ∩ B)′ คือทุกส่วนที่ไม่ใช่ส่วนร่วม"}
     ];
-
-    const cardSymbols=["A","B","∪","∩","−","′","(",")"];
-    const regionIds=["aOnly","intersect","bOnly","outside"];
-    let currentIndex=0,score=0,combo=1,lives=3,answerCards=[],answeredCorrectly=false;
-
-    const $=id=>document.getElementById(id);
-    const answerZone=$("answerZone"),cardBank=$("cardBank"),feedback=$("feedback"),progressBar=$("progressBar");
-
-    function init(){renderCardBank();loadQuestion();}
-
-    function renderCardBank(){
-      cardBank.innerHTML="";
-      cardSymbols.forEach(symbol=>{
-        const btn=document.createElement("button");
-        btn.className="math-card";btn.textContent=symbol;
-        btn.onclick=()=>addCard(symbol);
-        cardBank.appendChild(btn);
-      });
-    }
-
-    function loadQuestion(){
-      const q=questions[currentIndex];
-      answeredCorrectly=false;
-      $("questionTitle").textContent=q.title;
-      $("questionHintSmall").textContent="แตะการ์ดด้านล่างเพื่อเรียงคำตอบให้ตรงกับภาพ";
-      $("levelText").textContent=`ด่านที่ ${currentIndex+1} / ${questions.length}`;
-      regionIds.forEach(id=>{$(id).classList.remove("on");$(id).classList.add("off")});
-      q.regions.forEach(id=>{$(id).classList.add("on");$(id).classList.remove("off")});
-      answerCards=[];renderAnswer();setFeedback("ดูพื้นที่แรเงาก่อนว่า “อยู่ใน A”, “อยู่ใน B” หรือ “อยู่นอกวง”","");
-      updateUI();
-    }
-
-    function addCard(symbol){answerCards.push(symbol);renderAnswer();setFeedback("เรียงเสร็จแล้วกดตรวจคำตอบได้เลย","");navigator.vibrate?.(18)}
-    function removeCard(i){answerCards.splice(i,1);renderAnswer();navigator.vibrate?.(12)}
-
-    function renderAnswer(){
-      answerZone.innerHTML="";
-      if(!answerCards.length){answerZone.innerHTML='<span class="placeholder">แตะการ์ดด้านล่าง เช่น A ∩ B</span>';return}
-      answerCards.forEach((s,i)=>{
-        const btn=document.createElement("button");btn.className="math-card in-answer";btn.textContent=s;btn.onclick=()=>removeCard(i);answerZone.appendChild(btn);
-      });
-    }
-
+    const cardSymbols=["A","B","∪","∩","−","′","(",")"],regionIds=["aOnly","intersect","bOnly","outside"];
+    let currentIndex=0,score=0,combo=1,lives=3,answerCards=[],answeredCorrectly=false,gameMode="easy",modalAction="restart",autoNextTimer=null;
+    const $=id=>document.getElementById(id);const answerZone=$("answerZone"),cardBank=$("cardBank"),feedback=$("feedback"),progressBar=$("progressBar");
+    function init(){renderCardBank();loadQuestion();updateModeUI()}
+    function selectMode(mode){gameMode=mode;updateModeUI()}
+    function updateModeUI(){if($("easyModeBtn"))$("easyModeBtn").classList.toggle("active",gameMode==="easy");if($("hardModeBtn"))$("hardModeBtn").classList.toggle("active",gameMode==="hard");$("modeLabel").textContent=gameMode==="easy"?"โหมดง่าย":"โหมดยาก"}
+    function startGame(){currentIndex=0;score=0;combo=1;lives=3;answerCards=[];$("startScreen").classList.remove("show");loadQuestion();updateUI()}
+    function renderCardBank(){cardBank.innerHTML="";cardSymbols.forEach(symbol=>{const btn=document.createElement("button");btn.className="math-card";btn.textContent=symbol;btn.onclick=()=>addCard(symbol);cardBank.appendChild(btn)})}
+    function loadQuestion(){const q=questions[currentIndex];answeredCorrectly=false;regionIds.forEach(id=>{$(id).classList.remove("on");$(id).classList.add("off")});q.regions.forEach(id=>{$(id).classList.add("on");$(id).classList.remove("off")});answerCards=[];renderAnswer();setFeedback("แตะการ์ดด้านล่างเพื่อเรียงคำตอบ แล้วกดส่งคำตอบ","");updateUI()}
+    function addCard(symbol){answerCards.push(symbol);renderAnswer();setFeedback("พร้อมแล้ว กดส่งคำตอบได้เลย","");if(navigator.vibrate)navigator.vibrate(18)}
+    function removeCard(i){answerCards.splice(i,1);renderAnswer();if(navigator.vibrate)navigator.vibrate(12)}
+    function renderAnswer(){answerZone.innerHTML="";if(!answerCards.length){answerZone.innerHTML='<span class="placeholder">แตะการ์ดด้านล่าง เช่น A ∩ B</span>';return}answerCards.forEach((s,i)=>{const btn=document.createElement("button");btn.className="math-card in-answer";btn.textContent=s;btn.onclick=()=>removeCard(i);answerZone.appendChild(btn)})}
     function normalize(cards){return cards.join("").replace(/\s/g,"")}
-    function checkAnswer(){
-      const q=questions[currentIndex], user=normalize(answerCards);
-      if(!user){setFeedback("ยังไม่ได้เลือกการ์ดคำตอบครับ", "bad");shake(answerZone);return}
-      if(q.accepted.includes(user)){
-        if(!answeredCorrectly){score+=10*combo;combo=Math.min(combo+1,5);answeredCorrectly=true}
-        setFeedback("ถูกต้อง! "+q.explain,"good");updateUI();navigator.vibrate?.([30,30,30]);showWin(q.answer.join(" "));
-      }else{
-        lives=Math.max(lives-1,0);combo=1;updateUI();setFeedback("ยังไม่ถูกครับ ลองดูว่าแรเงาอยู่ในเซตไหน และอยู่นอกเซตไหน", "bad");shake(answerZone);navigator.vibrate?.(80);
-        if(lives===0){setTimeout(()=>showFail(),250)}
-      }
-    }
-
-    function showHint(){setFeedback("คำใบ้: "+questions[currentIndex].hint,"");navigator.vibrate?.(15)}
+    function checkAnswer(){const q=questions[currentIndex],user=normalize(answerCards);if(!user){setFeedback("ยังไม่ได้เลือกการ์ดคำตอบครับ","bad");shake(answerZone);return}if(q.accepted.includes(user)){if(!answeredCorrectly){score+=10*combo;combo=Math.min(combo+1,5);answeredCorrectly=true}setFeedback("ถูกต้อง! กำลังไปด่านต่อไป","good");updateUI();if(navigator.vibrate)navigator.vibrate([30,30,30]);showCorrectCard(q.answer.join(" "))}else{lives=Math.max(lives-1,0);combo=1;updateUI();setFeedback("ยังไม่ถูกครับ ลองเรียงใหม่อีกครั้ง","bad");shake(answerZone);if(navigator.vibrate)navigator.vibrate(80);if(lives===0)setTimeout(()=>handleNoLives(),250)}}
+    function handleNoLives(){if(gameMode==="easy"){lives=3;combo=1;answerCards=[];renderAnswer();updateUI();showPracticeCard()}else{showGameOver()}}
     function clearAnswer(){answerCards=[];renderAnswer();setFeedback("ล้างคำตอบแล้ว ลองเรียงใหม่อีกครั้ง","")}
     function nextQuestion(){currentIndex=(currentIndex+1)%questions.length;loadQuestion()}
-
-    function updateUI(){
-      $("score").textContent=score;
-      $("comboText").textContent=`Combo x${combo}`;
-      $("lifeText").textContent="❤️".repeat(lives)+"🤍".repeat(3-lives);
-      progressBar.style.width=((currentIndex+1)/questions.length*100)+"%";
-    }
+    function updateUI(){$("score").textContent=score;$("comboText").textContent=`Combo x${combo}`;$("lifeText").textContent="❤️".repeat(lives)+"🤍".repeat(3-lives);$("levelText").textContent=`ด่านที่ ${currentIndex+1} / ${questions.length}`;progressBar.style.width=((currentIndex+1)/questions.length*100)+"%";updateModeUI()}
     function setFeedback(msg,type){feedback.className="feedback"+(type?" "+type:"");feedback.textContent=msg}
-
-    function showWin(answerText){
-      $("modalEmoji").textContent="🎉";$("modalTitle").textContent="ถูกต้อง!";$("modalText").textContent=`คำตอบคือ ${answerText}  | ได้ ${10*combo} คะแนน`;
-      makeConfetti();$("overlay").classList.add("show");
-    }
-    function showFail(){
-      $("modalEmoji").textContent="💡";$("modalTitle").textContent="พักคิดนิดนึง";$("modalText").textContent="หัวใจหมดแล้ว ระบบเติมหัวใจให้ใหม่ แล้วลองด่านต่อไปนะ";
-      lives=3;combo=1;updateUI();$("confetti").innerHTML="";$("overlay").classList.add("show");
-    }
-    function closeOverlayAndNext(){$("overlay").classList.remove("show");nextQuestion()}
-
-    function makeConfetti(){
-      const box=$("confetti");box.innerHTML="";
-      const colors=["#2563eb","#7c3aed","#16a34a","#f59e0b","#ef4444"];
-      for(let i=0;i<42;i++){
-        const c=document.createElement("i");
-        c.style.left=Math.random()*100+"%";c.style.background=colors[i%colors.length];c.style.animationDelay=(Math.random()*.45)+"s";c.style.transform=`rotate(${Math.random()*180}deg)`;
-        box.appendChild(c);
-      }
-    }
-
-    function shake(el){
-      el.animate([{transform:"translateX(0)"},{transform:"translateX(-8px)"},{transform:"translateX(8px)"},{transform:"translateX(0)"}],{duration:240});
-    }
-
+    function showCorrectCard(answerText){modalAction="none";$("modalEmoji").textContent="🎉";$("modalTitle").textContent="ถูกต้อง!";$("modalText").textContent=`คำตอบคือ ${answerText}`;$("modalButton").style.display="none";makeConfetti();$("overlay").classList.add("show");clearTimeout(autoNextTimer);autoNextTimer=setTimeout(()=>{$("overlay").classList.remove("show");nextQuestion()},1350)}
+    function showPracticeCard(){modalAction="practice";$("modalEmoji").textContent="💡";$("modalTitle").textContent="ลองใหม่อีกครั้ง";$("modalText").textContent="ระบบเติมหัวใจให้แล้ว อยู่ข้อเดิมเพื่อฝึกให้เข้าใจก่อนนะ";$("modalButton").style.display="block";$("modalButton").textContent="ลองต่อ";$("confetti").innerHTML="";$("overlay").classList.add("show")}
+    function showGameOver(){modalAction="restart";$("modalEmoji").textContent="🏁";$("modalTitle").textContent="Game Over";$("modalText").textContent=`คะแนนของคุณคือ ${score} คะแนน`;$("modalButton").style.display="block";$("modalButton").textContent="เริ่มใหม่";$("confetti").innerHTML="";$("overlay").classList.add("show")}
+    function handleModalButton(){$("overlay").classList.remove("show");if(modalAction==="practice"){setFeedback("ลองดูภาพแรเงาอีกครั้ง แล้วเรียงคำตอบใหม่","");return}if(modalAction==="restart"){currentIndex=0;score=0;combo=1;lives=3;answerCards=[];loadQuestion();updateUI()}}
+    function makeConfetti(){const box=$("confetti");box.innerHTML="";const colors=["#2563eb","#7c3aed","#16a34a","#f59e0b","#ef4444"];for(let i=0;i<42;i++){const c=document.createElement("i");c.style.left=Math.random()*100+"%";c.style.background=colors[i%colors.length];c.style.animationDelay=(Math.random()*.45)+"s";c.style.transform=`rotate(${Math.random()*180}deg)`;box.appendChild(c)}}
+    function shake(el){el.animate([{transform:"translateX(0)"},{transform:"translateX(-8px)"},{transform:"translateX(8px)"},{transform:"translateX(0)"}],{duration:240})}
     init();
   </script>
 </body>
