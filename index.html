@@ -1477,6 +1477,20 @@ body:not(:has(.start-screen.show)) {
     const $=id=>document.getElementById(id);
     const answerZone=$('answerZone'),cardBank=$('cardBank'),progressBar=$('progressBar');
 
+    window.addEventListener('pagehide', () => {
+  saveProgress(true);
+});
+
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState === 'hidden') {
+    saveProgress(true);
+  }
+});
+
+window.addEventListener('beforeunload', () => {
+  saveProgress(true);
+});
+
 function init(){
   refreshStartScreenViewport();
 
@@ -1635,15 +1649,20 @@ $('modalText').innerHTML = `
         lives=START_LIVES;combo=1;correctStreak=0;answerCards=[];renderAnswer();updateUI();saveProgress();showPracticeCard();
       }else showGameOver();
     }
-    function nextQuestion(){
-      currentIndex=(currentIndex+1)%levels.length;
-      if(currentIndex===0){
-        showFinishCard();
-        clearSavedProgress();
-        return;
-      }
-      loadQuestion();
-    }
+function nextQuestion(){
+  currentIndex = (currentIndex + 1) % levels.length;
+
+  if(currentIndex === 0){
+    showFinishCard();
+    clearSavedProgress();
+    return;
+  }
+
+  loadQuestion();
+
+  // บันทึกด่านล่าสุดทันทีหลังเปลี่ยนข้อ
+  saveProgress(true);
+}
     function updateUI(){
 $('comboText').textContent=`⭐ ${score} • Combo x${combo}`;
       if(lives<=HEART_ICON_LIMIT){
@@ -1759,16 +1778,17 @@ function showGameMenu() {
   $('overlay').classList.add('show');
 }
 
-    function exitToStartScreen() {
+function exitToStartScreen() {
   $('overlay').classList.remove('show');
   $('modalCancel').style.display = 'none';
   $('modalExit').style.display = 'none';
   modalAction = '';
 
-  saveProgress();
+  // บังคับบันทึกก่อนกลับหน้าเลือกโหมด
+  saveProgress(true);
+
   $('startScreen').classList.add('show');
   updateContinueButton();
-  refreshStartScreenViewport();
 }
 
     function handleModalButton(){
