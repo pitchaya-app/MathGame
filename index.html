@@ -174,10 +174,13 @@
       line-height:1;
     }
     .symbol-btn:active{transform:scale(.94);box-shadow:0 4px 10px rgba(15,23,42,.10)}
-    .action-row{display:grid;grid-template-columns:.95fr .75fr 1.55fr;gap:8px;margin-top:9px}
+    .action-row{display:grid;grid-template-columns:.75fr .95fr 1.55fr;gap:8px;margin-top:9px}
     .action-btn{border:none;border-radius:18px;min-height:48px;padding:10px 12px;font-family:"Kanit";font-size:1rem;font-weight:800;cursor:pointer;touch-action:manipulation}
     .action-btn:active{transform:scale(.98)}
     .backspace-btn{background:#f8fafc;color:#334155;border:1px solid var(--line)}
+    .delete-btn{background:linear-gradient(180deg,#ffffff,#f8fafc);color:#334155;border:1px solid rgba(148,163,184,.45);box-shadow:0 8px 16px rgba(15,23,42,.08)}
+    .delete-icon{width:22px;height:22px;display:block;margin:0 auto}
+    .reveal-btn{background:linear-gradient(135deg,#ef4444,#b91c1c);color:#fff;box-shadow:0 12px 24px rgba(239,68,68,.22)}
     .submit-btn{color:white;background:linear-gradient(135deg,var(--primary),var(--primary2));box-shadow:0 12px 24px rgba(37,99,235,.22)}
 
     .overlay,.start-screen{
@@ -205,6 +208,7 @@
     .modal h2,.start-card h1{margin:8px 0 4px;font-size:1.55rem}
     .modal p,.start-card p{margin:0;color:#64748b;line-height:1.45}
     .modal .modal-btn,.start-btn{margin-top:16px;width:100%;border:none;border-radius:17px;min-height:50px;padding:10px 12px;font-family:"Kanit";font-size:1rem;font-weight:800;cursor:pointer;color:white;background:linear-gradient(135deg,var(--primary),var(--primary2));box-shadow:0 12px 24px rgba(37,99,235,.22)}
+    .modal .modal-cancel{margin-top:8px;width:100%;border:1px solid var(--line);border-radius:17px;min-height:46px;padding:10px 12px;font-family:"Kanit";font-size:.95rem;font-weight:800;cursor:pointer;color:#334155;background:#f8fafc}
     .mode-grid{display:grid;grid-template-columns:1fr;gap:10px;margin-top:18px}
     .mode-card{border:2px solid var(--line);border-radius:20px;background:#f8fafc;padding:13px;text-align:left;font-family:"Kanit";cursor:pointer}
     .mode-card strong{display:block;font-size:1rem;color:#0f172a}
@@ -306,12 +310,12 @@
     <section class="bottom-panel">
       <div class="bank-head"><strong>ปุ่มสัญลักษณ์</strong><span id="challengeLabel">แตะคำตอบเพื่อลบ</span></div>
       <div id="cardBank" class="button-bank"></div>
-      <div class="action-row"><button class="action-btn backspace-btn" onclick="revealAnswer()">เฉลย</button><button class="action-btn backspace-btn" onclick="backspaceAnswer()">⌫</button><button class="action-btn submit-btn" onclick="checkAnswer()">ส่งคำตอบ</button></div>
+      <div class="action-row"><button class="action-btn delete-btn" onclick="backspaceAnswer()" aria-label="ลบคำตอบล่าสุด"><svg class="delete-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 4h6l1 2h4v2H4V6h4l1-2Z" fill="currentColor" opacity=".95"/><path d="M7 9h10l-.7 10.1A2 2 0 0 1 14.3 21H9.7a2 2 0 0 1-2-1.9L7 9Z" fill="currentColor" opacity=".18"/><path d="M10 11v7M14 11v7" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></svg></button><button class="action-btn reveal-btn" onclick="revealAnswer()">เฉลย</button><button class="action-btn submit-btn" onclick="checkAnswer()">ส่งคำตอบ</button></div>
     </section>
 
     <div id="overlay" class="overlay">
       <div class="confetti" id="confetti"></div>
-      <div class="modal"><div class="modal-emoji" id="modalEmoji">🎉</div><h2 id="modalTitle">ถูกต้อง!</h2><p id="modalText">เก่งมาก</p><button id="modalButton" class="modal-btn" onclick="handleModalButton()">เริ่มใหม่</button></div>
+      <div class="modal"><div class="modal-emoji" id="modalEmoji">🎉</div><h2 id="modalTitle">ถูกต้อง!</h2><p id="modalText">เก่งมาก</p><button id="modalButton" class="modal-btn" onclick="handleModalButton()">เริ่มใหม่</button><button id="modalCancel" class="modal-cancel" style="display:none" onclick="closeOverlayOnly()">ยกเลิก</button></div>
     </div>
   </main>
 
@@ -526,7 +530,28 @@
     function clearAnswer(){answerCards=[];renderAnswer();saveProgress()}
 
     function revealAnswer(){
-      if(lives<=0) return;
+      if(lives<=0){
+        showWrongCard('หัวใจไม่พอ','การดูเฉลยต้องใช้หัวใจ 1 ดวง');
+        return;
+      }
+      modalAction='revealConfirm';
+      $('modalEmoji').textContent='⚠️';
+      $('modalTitle').textContent='ยืนยันการดูเฉลย?';
+      $('modalText').textContent='ถ้าดูเฉลย จะเสียหัวใจ 1 ดวง และ Streak จะเริ่มนับใหม่';
+      $('modalButton').style.display='block';
+      $('modalButton').textContent='ยืนยันเฉลย';
+      $('modalCancel').style.display='block';
+      $('modalCancel').textContent='ยกเลิก';
+      $('confetti').innerHTML='';
+      $('overlay').classList.add('show');
+    }
+
+    function confirmReveal(){
+      if(lives<=0){
+        $('overlay').classList.remove('show');
+        showWrongCard('หัวใจไม่พอ','การดูเฉลยต้องใช้หัวใจ 1 ดวง');
+        return;
+      }
       lives=Math.max(lives-1,0);
       combo=1;
       correctStreak=0;
@@ -539,6 +564,7 @@
       $('modalText').textContent=`เสียหัวใจ 1 ดวง • ตัวอย่างคำตอบ: ${answerText}`;
       $('modalButton').style.display='block';
       $('modalButton').textContent='ปิด';
+      $('modalCancel').style.display='none';
       $('confetti').innerHTML='';
       $('overlay').classList.add('show');
     }
@@ -629,6 +655,7 @@
     }
 
     function showCorrectCard(answerText, gotBonusHeart=false){
+      $('modalCancel').style.display='none';
       modalAction='none';
       $('modalEmoji').textContent=gotBonusHeart?'❤️':'🎉';
       $('modalTitle').textContent=gotBonusHeart?'ถูกต้อง! ได้หัวใจเพิ่ม':'ถูกต้อง!';
@@ -640,6 +667,7 @@
       autoNextTimer=setTimeout(()=>{$('overlay').classList.remove('show');nextQuestion()},1350);
     }
     function showWrongCard(title,message){
+      $('modalCancel').style.display='none';
       modalAction='wrong';
       $('modalEmoji').textContent='🤔';
       $('modalTitle').textContent=title;
@@ -650,6 +678,7 @@
       $('overlay').classList.add('show');
     }
     function showPracticeCard(){
+      $('modalCancel').style.display='none';
       modalAction='practice';
       $('modalEmoji').textContent='💡';
       $('modalTitle').textContent='ลองใหม่อีกครั้ง';
@@ -660,6 +689,7 @@
       $('overlay').classList.add('show');
     }
     function showGameOver(){
+      $('modalCancel').style.display='none';
       modalAction='restart';
       $('modalEmoji').textContent='🏁';
       $('modalTitle').textContent='Game Over';
@@ -670,7 +700,12 @@
       $('overlay').classList.add('show');
     }
     function handleModalButton(){
+      if(modalAction==='revealConfirm'){
+        confirmReveal();
+        return;
+      }
       $('overlay').classList.remove('show');
+      $('modalCancel').style.display='none';
       if(modalAction==='revealNoLives'){
         setTimeout(()=>handleNoLives(),120);
         return;
@@ -684,6 +719,7 @@
       if(modalAction==='restart'){currentIndex=0;score=0;combo=1;lives=START_LIVES;correctStreak=0;answerCards=[];clearSavedProgress();loadQuestion();updateUI();saveProgress()}
     }
     function showFinishCard(){
+      $('modalCancel').style.display='none';
       modalAction='finish';
       $('modalEmoji').textContent='🏆';
       $('modalTitle').textContent='จบเกม!';
@@ -715,6 +751,12 @@
       }else{
         btn.style.display='none';
       }
+    }
+
+    function closeOverlayOnly(){
+      $('overlay').classList.remove('show');
+      $('modalCancel').style.display='none';
+      modalAction='';
     }
 
     function makeConfetti(){
