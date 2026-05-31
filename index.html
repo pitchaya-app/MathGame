@@ -211,31 +211,51 @@
       padding:18px;
     }
     .overlay.show,.start-screen.show{display:grid;animation:fadeIn .18s ease}
-    .reveal-answer-box {
-  margin-top: 14px;
-  padding: 14px 12px;
-  border-radius: 18px;
+   /* ===== Reveal Answer Highlight ===== */
+#modalText {
+  display: block;
+}
+
+.reveal-answer-note {
+  display: block;
+  color: #64748b;
+  font-family: "Kanit", sans-serif;
+  font-size: 1rem;
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+
+.reveal-answer-box {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  margin-top: 10px;
+  padding: 16px 14px;
+  border-radius: 20px;
   background: linear-gradient(135deg, #eff6ff, #f5f3ff);
   border: 2px solid rgba(37, 99, 235, .28);
-  box-shadow: 0 12px 26px rgba(37, 99, 235, .12);
+  box-shadow: 0 14px 30px rgba(37, 99, 235, .14);
 }
 
 .reveal-answer-label {
   display: block;
   font-family: "Kanit", sans-serif;
-  font-size: .82rem;
-  font-weight: 800;
+  font-size: .86rem;
+  font-weight: 900;
   color: #2563eb;
-  margin-bottom: 4px;
+  margin-bottom: 8px;
 }
 
 .reveal-answer-text {
   display: block;
+  width: 100%;
   font-family: "Times New Roman", "Cambria Math", serif;
-  font-size: 2rem;
+  font-size: 2.25rem;
   font-weight: 900;
   color: #0f172a;
-  line-height: 1.1;
+  line-height: 1.15;
+  text-align: center;
+  word-break: keep-all;
 }
     .modal,.start-card{
       width:min(100%,390px);
@@ -582,7 +602,7 @@
 
     <div id="overlay" class="overlay">
       <div class="confetti" id="confetti"></div>
-      <div class="modal"><div class="modal-emoji" id="modalEmoji">🎉</div><h2 id="modalTitle">ถูกต้อง!</h2><p id="modalText">เก่งมาก</p><button id="modalButton" class="modal-btn" onclick="handleModalButton()">เริ่มใหม่</button><button id="modalCancel" class="modal-cancel" style="display:none" onclick="closeOverlayOnly()">ยกเลิก</button></div>
+      <div class="modal"><div class="modal-emoji" id="modalEmoji">🎉</div><h2 id="modalTitle">ถูกต้อง!</h2><div id="modalText">เก่งมาก</div><button id="modalButton" class="modal-btn" onclick="handleModalButton()">เริ่มใหม่</button><button id="modalCancel" class="modal-cancel" style="display:none" onclick="closeOverlayOnly()">ยกเลิก</button></div>
     </div>
   </main>
 
@@ -828,8 +848,8 @@
       modalAction=lives===0?'revealNoLives':'reveal';
       $('modalEmoji').textContent='👀';
       $('modalTitle').textContent='เฉลย';
-      $('modalText').innerHTML = `
-  <span>เสียหัวใจ 1 ดวง</span>
+$('modalText').innerHTML = `
+  <span class="reveal-answer-note">เสียหัวใจ 1 ดวง</span>
   <span class="reveal-answer-box">
     <span class="reveal-answer-label">ตัวอย่างคำตอบ</span>
     <span class="reveal-answer-text">${answerText}</span>
