@@ -49,9 +49,48 @@ button{font-family:"Kanit",system-ui,sans-serif}
     transform: translateY(0);
   }
 }
+
+    /* ===== Smooth iOS PWA Boot Curtain ===== */
+.boot-curtain {
+  position: fixed;
+  inset: 0;
+  z-index: 999999;
+  background:
+    radial-gradient(circle at 50% 12%, rgba(34,211,238,.45), transparent 28%),
+    radial-gradient(circle at 20% 22%, rgba(59,130,246,.34), transparent 26%),
+    radial-gradient(circle at 84% 76%, rgba(168,85,247,.38), transparent 30%),
+    linear-gradient(160deg, #0284c7 0%, #1d4ed8 45%, #5b21b6 100%);
+  opacity: 1;
+  pointer-events: none;
+  transition: opacity .32s ease;
+}
+
+.boot-curtain.hide {
+  opacity: 0;
+}
+
+.boot-curtain.remove {
+  display: none;
+}
+
+.start-screen.show {
+  animation: startFadeInSoft .36s ease both;
+}
+
+@keyframes startFadeInSoft {
+  from {
+    opacity: .96;
+    transform: translateY(1px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
   </style>
 </head>
 <body>
+    <div id="bootCurtain" class="boot-curtain"></div>
   <main class="app">
     <section id="startScreen" class="start-screen show">
       <div class="start-card">
@@ -283,7 +322,7 @@ function saveProgress(force=false){if(!force&&(!$('startScreen')||$('startScreen
 function clearSavedProgress(){try{localStorage.removeItem(SAVE_KEY)}catch(e){}clearProgressFromIDB();updateContinueButton()}
 async function updateContinueButton(){const btn=$('continueBtn');if(!btn)return;const data=await getSavedProgressAsync();if(data&&Number.isFinite(Number(data.currentIndex))){btn.style.display='block';btn.textContent=`เล่นต่อ ด่านที่ ${Number(data.currentIndex)+1}`}else{btn.style.display='none'}}
 
-function nudgeIOSPWAViewportSoft() {
+function isIOSStandalonePWA() {
   const isIOS =
     /iPad|iPhone|iPod/.test(navigator.userAgent) ||
     (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
@@ -292,38 +331,56 @@ function nudgeIOSPWAViewportSoft() {
     window.navigator.standalone === true ||
     window.matchMedia('(display-mode: standalone)').matches;
 
-  if (!isIOS || !isStandalone) return;
+  return isIOS && isStandalone;
+}
+
+function smoothBootForIOSPWA() {
+  const curtain = $('bootCurtain');
+
+  // ถ้าไม่ใช่ iOS PWA ให้เอาฉากออกเร็ว ๆ
+  if (!isIOSStandalonePWA()) {
+    if (curtain) {
+      curtain.classList.add('hide');
+      setTimeout(() => curtain.classList.add('remove'), 360);
+    }
+    return;
+  }
 
   const root = document.documentElement;
   const body = document.body;
   const scroller = document.scrollingElement || root;
 
-  // กัน animation / scroll smooth ทำให้เห็นการกระตุก
   const oldScrollBehavior = root.style.scrollBehavior;
-  root.style.scrollBehavior = 'auto';
-
-  // เพิ่มพื้นที่ให้เลื่อนได้แค่นิดเดียว
-  const oldBodyMinHeight = body.style.minHeight;
   const oldRootMinHeight = root.style.minHeight;
-  body.style.minHeight = 'calc(100vh + 3px)';
-  root.style.minHeight = 'calc(100vh + 3px)';
+  const oldBodyMinHeight = body.style.minHeight;
+  const oldOverflow = body.style.overflow;
 
-  // ให้ browser render ก่อน 1 เฟรม แล้วค่อย nudge
-  requestAnimationFrame(() => {
+  root.style.scrollBehavior = 'auto';
+  root.style.minHeight = 'calc(100vh + 4px)';
+  body.style.minHeight = 'calc(100vh + 4px)';
+  body.style.overflow = 'hidden';
+
+  // ให้ iOS มีเวลาสร้าง viewport ก่อน แล้วค่อย nudge ตอนยังมี curtain บังอยู่
+  setTimeout(() => {
     requestAnimationFrame(() => {
       scroller.scrollTop = 1;
 
-      // อย่ารีบเด้งกลับทันที ให้ iOS คำนวณ viewport ก่อน
       setTimeout(() => {
         scroller.scrollTop = 0;
 
-        body.style.minHeight = oldBodyMinHeight;
-        root.style.minHeight = oldRootMinHeight;
         root.style.scrollBehavior = oldScrollBehavior;
+        root.style.minHeight = oldRootMinHeight;
+        body.style.minHeight = oldBodyMinHeight;
+        body.style.overflow = oldOverflow;
+
+        if (curtain) {
+          curtain.classList.add('hide');
+          setTimeout(() => curtain.classList.add('remove'), 360);
+        }
       }, 120);
     });
-  });
-}   
+  }, 180);
+} 
 
     
 function init(){
@@ -335,8 +392,9 @@ function init(){
     $('startVersion').textContent = APP_VERSION;
   }
 
-  nudgeIOSPWAViewportSoft();
+  smoothBootForIOSPWA();
 }
+    
 function selectMode(mode){gameMode=mode;updateModeUI()}
 function updateModeUI(){if($('easyModeBtn'))$('easyModeBtn').classList.toggle('active',gameMode==='easy');if($('hardModeBtn'))$('hardModeBtn').classList.toggle('active',gameMode==='hard');$('modeLabel').textContent=gameMode==='easy'?'โหมดฝึกหัด':'โหมดท้าทาย'}
 function startGame(){currentIndex=0;score=0;combo=1;lives=START_LIVES;correctStreak=0;answerCards=[];clearSavedProgress();$('startScreen').classList.remove('show');loadQuestion();updateUI();saveProgress(true)}
