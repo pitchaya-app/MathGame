@@ -271,7 +271,22 @@
     .modal h2,.start-card h1{margin:8px 0 4px;font-size:1.55rem}
     .modal p,.start-card p{margin:0;color:#64748b;line-height:1.45}
     .modal .modal-btn,.start-btn{margin-top:16px;width:100%;border:none;border-radius:17px;min-height:50px;padding:10px 12px;font-family:"Kanit";font-size:1rem;font-weight:800;cursor:pointer;color:white;background:linear-gradient(135deg,var(--primary),var(--primary2));box-shadow:0 12px 24px rgba(37,99,235,.22)}
+    
     .modal .modal-cancel{margin-top:8px;width:100%;border:1px solid var(--line);border-radius:17px;min-height:46px;padding:10px 12px;font-family:"Kanit";font-size:.95rem;font-weight:800;cursor:pointer;color:#334155;background:#f8fafc}
+   .modal-exit {
+  margin-top: 8px;
+  width: 100%;
+  border: 1px solid rgba(239, 68, 68, .28);
+  border-radius: 17px;
+  min-height: 46px;
+  padding: 10px 12px;
+  font-family: "Kanit";
+  font-size: .95rem;
+  font-weight: 800;
+  cursor: pointer;
+  color: #b91c1c;
+  background: #fff1f2;
+}
     .mode-grid{display:grid;grid-template-columns:1fr;gap:10px;margin-top:18px}
     .mode-card{border:2px solid var(--line);border-radius:20px;background:#f8fafc;padding:13px;text-align:left;font-family:"Kanit";cursor:pointer}
     .mode-card strong{display:block;font-size:1rem;color:#0f172a}
@@ -602,7 +617,23 @@
 
     <div id="overlay" class="overlay">
       <div class="confetti" id="confetti"></div>
-      <div class="modal"><div class="modal-emoji" id="modalEmoji">🎉</div><h2 id="modalTitle">ถูกต้อง!</h2><div id="modalText">เก่งมาก</div><button id="modalButton" class="modal-btn" onclick="handleModalButton()">เริ่มใหม่</button><button id="modalCancel" class="modal-cancel" style="display:none" onclick="closeOverlayOnly()">ยกเลิก</button></div>
+      <div class="modal">
+  <div class="modal-emoji" id="modalEmoji">🎉</div>
+  <h2 id="modalTitle">ถูกต้อง!</h2>
+  <div id="modalText">เก่งมาก</div>
+
+  <button id="modalButton" class="modal-btn" onclick="handleModalButton()">
+    เริ่มใหม่
+  </button>
+
+  <button id="modalExit" class="modal-exit" style="display:none" onclick="exitToStartScreen()">
+    ออกจากเกม / เลือกโหมด
+  </button>
+
+  <button id="modalCancel" class="modal-cancel" style="display:none" onclick="closeOverlayOnly()">
+    ยกเลิก
+  </button>
+</div>
     </div>
   </main>
 
@@ -953,6 +984,7 @@ $('comboText').textContent=`⭐ ${score} • Combo x${combo}`;
       $('modalTitle').textContent=gotBonusHeart?'ถูกต้อง! ได้หัวใจเพิ่ม':'ถูกต้อง!';
       $('modalText').textContent=gotBonusHeart?`ตอบถูกครบ 5 ข้อติดกัน ได้หัวใจเพิ่ม 1 ดวง • ตัวอย่างคำตอบ: ${answerText}`:`ตัวอย่างคำตอบ: ${answerText}`;
       $('modalButton').style.display='none';
+      $('modalExit').style.display = 'none';
       makeConfetti();
       $('overlay').classList.add('show');
       clearTimeout(autoNextTimer);
@@ -968,6 +1000,7 @@ $('comboText').textContent=`⭐ ${score} • Combo x${combo}`;
       $('modalButton').textContent='ลองใหม่';
       $('confetti').innerHTML='';
       $('overlay').classList.add('show');
+      $('modalExit').style.display = 'none';
     }
     function showPracticeCard(){
       $('modalCancel').style.display='none';
@@ -977,6 +1010,7 @@ $('comboText').textContent=`⭐ ${score} • Combo x${combo}`;
       $('modalText').textContent='ระบบเติมหัวใจให้แล้ว อยู่ข้อเดิมเพื่อฝึกให้เข้าใจก่อนนะ';
       $('modalButton').style.display='block';
       $('modalButton').textContent='ลองต่อ';
+      $('modalExit').style.display = 'none';
       $('confetti').innerHTML='';
       $('overlay').classList.add('show');
     }
@@ -988,24 +1022,39 @@ $('comboText').textContent=`⭐ ${score} • Combo x${combo}`;
       $('modalText').textContent=`คะแนนของคุณคือ ${score} คะแนน`;
       $('modalButton').style.display='block';
       $('modalButton').textContent='เริ่มใหม่';
+      $('modalExit').style.display = 'none';
       $('confetti').innerHTML='';
       $('overlay').classList.add('show');
     }
 
-    function showGameMenu() {
+function showGameMenu() {
   modalAction = 'menu';
   $('modalEmoji').textContent = '⚙️';
   $('modalTitle').textContent = 'VENN Quest';
-  $('modalText').textContent = `ตอนนี้อยู่ด่านที่ ${currentIndex + 1} • คะแนน ${score} คะแนน`;
+  $('modalText').innerHTML = `ตอนนี้อยู่ด่านที่ ${currentIndex + 1} • คะแนน ${score} คะแนน`;
 
   $('modalButton').style.display = 'block';
   $('modalButton').textContent = 'เริ่มเกมใหม่';
+
+  $('modalExit').style.display = 'block';
+  $('modalExit').textContent = 'ออกจากเกม / เลือกโหมด';
 
   $('modalCancel').style.display = 'block';
   $('modalCancel').textContent = 'เล่นต่อ';
 
   $('confetti').innerHTML = '';
   $('overlay').classList.add('show');
+}
+
+    function exitToStartScreen() {
+  $('overlay').classList.remove('show');
+  $('modalCancel').style.display = 'none';
+  $('modalExit').style.display = 'none';
+  modalAction = '';
+
+  saveProgress();
+  $('startScreen').classList.add('show');
+  updateContinueButton();
 }
 
     function handleModalButton(){
@@ -1065,6 +1114,7 @@ $('comboText').textContent=`⭐ ${score} • Combo x${combo}`;
       $('modalText').textContent=`คุณผ่านครบ 100 ด่านแล้ว คะแนนรวม ${score} คะแนน`;
       $('modalButton').style.display='block';
       $('modalButton').textContent='กลับหน้าเริ่ม';
+      $('modalExit').style.display = 'none';
       makeConfetti();
       $('overlay').classList.add('show');
     }
@@ -1092,11 +1142,12 @@ $('comboText').textContent=`⭐ ${score} • Combo x${combo}`;
       }
     }
 
-    function closeOverlayOnly(){
-      $('overlay').classList.remove('show');
-      $('modalCancel').style.display='none';
-      modalAction='';
-    }
+function closeOverlayOnly(){
+  $('overlay').classList.remove('show');
+  $('modalCancel').style.display='none';
+  $('modalExit').style.display='none';
+  modalAction='';
+}
 
     function makeConfetti(){
       const box=$('confetti');box.innerHTML='';
