@@ -174,7 +174,7 @@
       line-height:1;
     }
     .symbol-btn:active{transform:scale(.94);box-shadow:0 4px 10px rgba(15,23,42,.10)}
-    .action-row{display:grid;grid-template-columns:.75fr 1.8fr;gap:8px;margin-top:9px}
+    .action-row{display:grid;grid-template-columns:.95fr .75fr 1.55fr;gap:8px;margin-top:9px}
     .action-btn{border:none;border-radius:18px;min-height:48px;padding:10px 12px;font-family:"Kanit";font-size:1rem;font-weight:800;cursor:pointer;touch-action:manipulation}
     .action-btn:active{transform:scale(.98)}
     .backspace-btn{background:#f8fafc;color:#334155;border:1px solid var(--line)}
@@ -227,7 +227,7 @@
       <div class="start-card">
         <div class="start-logo">∩</div>
         <h1>Venn Quest ABC</h1>
-        <p>100 ด่าน: เริ่มจาก 2 เซต แล้วค่อยเพิ่ม C พร้อมด่าน Challenge ที่จำกัดปุ่ม</p>
+        <p>100 ด่าน: เริ่มจาก 2 เซต แล้วค่อยเพิ่ม C พร้อมด่าน Challenge ที่จำกัดปุ่ม เริ่มต้น 5 หัวใจ</p>
         <div class="mode-grid">
           <button id="easyModeBtn" class="mode-card active" onclick="selectMode('easy')"><strong>โหมดง่าย</strong><span>หัวใจหมด เติมใหม่และอยู่ข้อเดิม</span></button>
           <button id="hardModeBtn" class="mode-card" onclick="selectMode('hard')"><strong>โหมดยาก</strong><span>หัวใจหมด Game Over</span></button>
@@ -241,7 +241,7 @@
         <div class="logo">∩</div>
         <div class="brand-text"><div class="brand-title">Venn Quest ABC</div><div class="brand-sub" id="modeLabel">โหมดง่าย</div></div>
       </div>
-      <div class="score-life"><div class="scorebox">⭐ <span id="score">0</span></div><div class="scorebox life-box"><span id="lifeText">❤️❤️❤️</span></div></div>
+      <div class="score-life"><div class="scorebox">⭐ <span id="score">0</span></div><div class="scorebox life-box"><span id="lifeText">❤️❤️❤️❤️❤️</span></div></div>
     </header>
 
     <div class="progress-wrap">
@@ -305,7 +305,7 @@
     <section class="bottom-panel">
       <div class="bank-head"><strong>ปุ่มสัญลักษณ์</strong><span id="challengeLabel">แตะคำตอบเพื่อลบ</span></div>
       <div id="cardBank" class="button-bank"></div>
-      <div class="action-row"><button class="action-btn backspace-btn" onclick="backspaceAnswer()">⌫</button><button class="action-btn submit-btn" onclick="checkAnswer()">ส่งคำตอบ</button></div>
+      <div class="action-row"><button class="action-btn backspace-btn" onclick="revealAnswer()">เฉลย</button><button class="action-btn backspace-btn" onclick="backspaceAnswer()">⌫</button><button class="action-btn submit-btn" onclick="checkAnswer()">ส่งคำตอบ</button></div>
     </section>
 
     <div id="overlay" class="overlay">
@@ -327,7 +327,7 @@
     const L = (mode, expr, allowed=null, show=null, tag='') => ({ mode, expr, allowed: allowed || (mode===2 ? ALL_2 : ALL_3), show: show || expr, tag });
 
     const levels = [
-      // 1–10: 2 เซต พื้นฐาน ให้เด็กเห็นเครื่องหมายตรงก่อน
+      // 1–10: 2 เซตพื้นฐาน
       L(2,['A']),
       L(2,['B']),
       L(2,['A','∪','B']),
@@ -338,34 +338,8 @@
       L(2,['B','′']),
       L(2,['(','A','∪','B',')','′']),
       L(2,['(','A','∩','B',')','′']),
-      // 11–25: 2 เซต Challenge ใช้พื้นที่เดิม แต่จำกัดปุ่มเพื่อบังคับรูปเทียบเท่า
-      L(2,['A','−','B'],NO_MINUS_2,['A','∩','B','′'],'Challenge'),
-      L(2,['B','−','A'],NO_MINUS_2,['B','∩','A','′'],'Challenge'),
-      L(2,['U','−','A'],NO_MINUS_2,['A','′'],'Challenge'),
-      L(2,['U','−','B'],NO_MINUS_2,['B','′'],'Challenge'),
-      L(2,['(','A','∪','B',')','′'],NO_UNION_2,['A','′','∩','B','′'],'Challenge'),
-      L(2,['(','A','∩','B',')','′'],NO_INTER_2,['A','′','∪','B','′'],'Challenge'),
-      L(2,['A','∪','B','′']),
-      L(2,['B','∪','A','′']),
-      L(2,['(','A','−','B',')','∪','(','B','−','A',')']),
-      L(2,['(','A','−','B',')','∪','(','B','−','A',')'],NO_MINUS_2,['(','A','∩','B','′',')','∪','(','B','∩','A','′',')'],'Challenge'),
-      L(2,['(','A','∪','B',')','−','(','A','∩','B',')'],NO_MINUS_2,['(','A','∪','B',')','∩','(','A','∩','B',')','′'],'Challenge'),
-      L(2,['A','′','∩','B']),
-      L(2,['A','′','∪','B']),
-      L(2,['A','∩','B','′'],NO_MINUS_2,['A','∩','B','′'],'Challenge'),
-      L(2,['B','∩','A','′'],NO_MINUS_2,['B','∩','A','′'],'Challenge'),
-      // 26–35: 2 เซต Boss
-      L(2,['A','∪','B'],NO_INTER_2,['A','∪','B'],'Boss'),
-      L(2,['A','∩','B'],NO_UNION_2,['A','∩','B'],'Boss'),
-      L(2,['A','′','∩','B','′'],NO_UNION_2,['A','′','∩','B','′'],'Boss'),
-      L(2,['A','′','∪','B','′'],NO_INTER_2,['A','′','∪','B','′'],'Boss'),
-      L(2,['U']),
-      L(2,['U','−','(','A','∪','B',')'],NO_MINUS_2,['(','A','∪','B',')','′'],'Boss'),
-      L(2,['U','−','(','A','∩','B',')'],NO_MINUS_2,['(','A','∩','B',')','′'],'Boss'),
-      L(2,['(','A','∪','B','′',')','∩','B']),
-      L(2,['(','B','∪','A','′',')','∩','A']),
-      L(2,['(','A','′','∩','B',')','∪','(','A','∩','B','′',')'],NO_MINUS_2,['(','A','′','∩','B',')','∪','(','A','∩','B','′',')'],'Boss'),
-      // 36–50: 3 เซต พื้นฐาน เปิด C
+
+      // 11–25: 3 เซตพื้นฐาน
       L(3,['C']),
       L(3,['A','∪','C']),
       L(3,['B','∪','C']),
@@ -381,7 +355,20 @@
       L(3,['(','A','∪','C',')','′']),
       L(3,['(','B','∪','C',')','′']),
       L(3,['(','A','∪','B','∪','C',')','′']),
-      // 51–70: 3 เซต Challenge กลุ่มลบเซตและ De Morgan
+
+      // 26–35: 2 เซต Challenge แบบบังคับนิพจน์เทียบเท่า
+      L(2,['A','−','B'],NO_MINUS_2,['A','∩','B','′'],'Challenge'),
+      L(2,['B','−','A'],NO_MINUS_2,['B','∩','A','′'],'Challenge'),
+      L(2,['U','−','A'],NO_MINUS_2,['A','′'],'Challenge'),
+      L(2,['U','−','B'],NO_MINUS_2,['B','′'],'Challenge'),
+      L(2,['(','A','∪','B',')','′'],NO_UNION_2,['A','′','∩','B','′'],'Challenge'),
+      L(2,['(','A','∩','B',')','′'],NO_INTER_2,['A','′','∪','B','′'],'Challenge'),
+      L(2,['(','A','−','B',')','∪','(','B','−','A',')'],NO_MINUS_2,['(','A','∩','B','′',')','∪','(','B','∩','A','′',')'],'Challenge'),
+      L(2,['(','A','∪','B',')','−','(','A','∩','B',')'],NO_MINUS_2,['(','A','∪','B',')','∩','(','A','∩','B',')','′'],'Challenge'),
+      L(2,['A','∩','B','′'],NO_MINUS_2,['A','∩','B','′'],'Challenge'),
+      L(2,['B','∩','A','′'],NO_MINUS_2,['B','∩','A','′'],'Challenge'),
+
+      // 36–50: 3 เซต Challenge
       L(3,['A','−','C'],NO_MINUS_3,['A','∩','C','′'],'Challenge'),
       L(3,['C','−','A'],NO_MINUS_3,['C','∩','A','′'],'Challenge'),
       L(3,['B','−','C'],NO_MINUS_3,['B','∩','C','′'],'Challenge'),
@@ -395,29 +382,48 @@
       L(3,['U','−','C'],NO_MINUS_3,['C','′'],'Challenge'),
       L(3,['(','A','∪','B','∪','C',')','′'],NO_UNION_3,['A','′','∩','B','′','∩','C','′'],'Challenge'),
       L(3,['(','A','∩','B','∩','C',')','′'],NO_INTER_3,['A','′','∪','B','′','∪','C','′'],'Challenge'),
-      L(3,['A','∩','B','∩','C','′']),
-      L(3,['A','∩','C','∩','B','′']),
-      L(3,['B','∩','C','∩','A','′']),
       L(3,['C','∩','A','′','∩','B','′'],NO_MINUS_3,['C','∩','A','′','∩','B','′'],'Challenge'),
       L(3,['A','∩','B','′','∩','C','′'],NO_MINUS_3,['A','∩','B','′','∩','C','′'],'Challenge'),
-      L(3,['B','∩','A','′','∩','C','′'],NO_MINUS_3,['B','∩','A','′','∩','C','′'],'Challenge'),
-      L(3,['A','′','∩','B','′','∩','C','′'],NO_UNION_3,['A','′','∩','B','′','∩','C','′'],'Challenge'),
-      // 71–85: 3 เซตระดับกลาง
+
+      // 51–70: 3 เซตระดับกลาง
       L(3,['(','A','∪','B',')','∩','C']),
       L(3,['(','A','∪','C',')','∩','B']),
       L(3,['(','B','∪','C',')','∩','A']),
       L(3,['A','∪','(','B','∩','C',')']),
       L(3,['B','∪','(','A','∩','C',')']),
       L(3,['C','∪','(','A','∩','B',')']),
-      L(3,['(','A','∩','B',')','∪','C'],NO_INTER_3,['(','A','∩','B',')','∪','C'],'Challenge'),
-      L(3,['(','A','∩','C',')','∪','B'],NO_INTER_3,['(','A','∩','C',')','∪','B'],'Challenge'),
-      L(3,['(','B','∩','C',')','∪','A'],NO_INTER_3,['(','B','∩','C',')','∪','A'],'Challenge'),
+      L(3,['(','A','∩','B',')','∪','C']),
+      L(3,['(','A','∩','C',')','∪','B']),
+      L(3,['(','B','∩','C',')','∪','A']),
       L(3,['A','∪','B','∪','C'],NO_INTER_3,['A','∪','B','∪','C'],'Challenge'),
-      L(3,['A','′','∪','B','′','∪','C','′'],NO_INTER_3,['A','′','∪','B','′','∪','C','′'],'Challenge'),
+      L(3,['A','∩','B','∩','C','′']),
+      L(3,['A','∩','C','∩','B','′']),
+      L(3,['B','∩','C','∩','A','′']),
       L(3,['(','A','∪','B',')','∩','C','′'],NO_MINUS_3,['(','A','∪','B',')','∩','C','′'],'Challenge'),
       L(3,['(','A','∪','C',')','∩','B','′'],NO_MINUS_3,['(','A','∪','C',')','∩','B','′'],'Challenge'),
       L(3,['(','B','∪','C',')','∩','A','′'],NO_MINUS_3,['(','B','∪','C',')','∩','A','′'],'Challenge'),
       L(3,['U','−','(','A','∩','B','∩','C',')'],NO_MINUS_3,['(','A','∩','B','∩','C',')','′'],'Challenge'),
+      L(3,['A','′','∩','B','′','∩','C','′'],NO_UNION_3,['A','′','∩','B','′','∩','C','′'],'Challenge'),
+      L(3,['A','′','∪','B','′','∪','C','′'],NO_INTER_3,['A','′','∪','B','′','∪','C','′'],'Challenge'),
+      L(3,['A','∪','B','∪','C','′']),
+
+      // 71–85: 2 เซต Boss
+      L(2,['A','∪','B'],NO_INTER_2,['A','∪','B'],'Boss'),
+      L(2,['A','∩','B'],NO_UNION_2,['A','∩','B'],'Boss'),
+      L(2,['A','′','∩','B','′'],NO_UNION_2,['A','′','∩','B','′'],'Boss'),
+      L(2,['A','′','∪','B','′'],NO_INTER_2,['A','′','∪','B','′'],'Boss'),
+      L(2,['U'],ALL_2,['U'],'Boss'),
+      L(2,['U','−','(','A','∪','B',')'],NO_MINUS_2,['(','A','∪','B',')','′'],'Boss'),
+      L(2,['U','−','(','A','∩','B',')'],NO_MINUS_2,['(','A','∩','B',')','′'],'Boss'),
+      L(2,['(','A','∪','B','′',')','∩','B'],ALL_2,['(','A','∪','B','′',')','∩','B'],'Boss'),
+      L(2,['(','B','∪','A','′',')','∩','A'],ALL_2,['(','B','∪','A','′',')','∩','A'],'Boss'),
+      L(2,['(','A','′','∩','B',')','∪','(','A','∩','B','′',')'],NO_MINUS_2,['(','A','′','∩','B',')','∪','(','A','∩','B','′',')'],'Boss'),
+      L(2,['A','∪','B','′'],NO_MINUS_2,['A','∪','B','′'],'Boss'),
+      L(2,['B','∪','A','′'],NO_MINUS_2,['B','∪','A','′'],'Boss'),
+      L(2,['A','′','∩','B'],NO_MINUS_2,['A','′','∩','B'],'Boss'),
+      L(2,['A','′','∪','B'],NO_MINUS_2,['A','′','∪','B'],'Boss'),
+      L(2,['(','A','∩','B','′',')','∪','(','A','′','∩','B',')'],NO_MINUS_2,['(','A','∩','B','′',')','∪','(','A','′','∩','B',')'],'Boss'),
+
       // 86–100: Boss Challenge
       L(3,['(','A','∩','B','′',')','∪','C'],NO_MINUS_3,['(','A','∩','B','′',')','∪','C'],'Boss'),
       L(3,['(','B','∩','C','′',')','∪','A'],NO_MINUS_3,['(','B','∩','C','′',')','∪','A'],'Boss'),
@@ -441,7 +447,9 @@
     const ids3=['aOnly','bOnly','cOnly','abOnly','acOnly','bcOnly','abc','outside'];
     const data3={aOnly:{A:true,B:false,C:false},bOnly:{A:false,B:true,C:false},cOnly:{A:false,B:false,C:true},abOnly:{A:true,B:true,C:false},acOnly:{A:true,B:false,C:true},bcOnly:{A:false,B:true,C:true},abc:{A:true,B:true,C:true},outside:{A:false,B:false,C:false}};
 
-    let currentIndex=0,score=0,combo=1,lives=3,answerCards=[],gameMode='easy',modalAction='restart',autoNextTimer=null,targetSet=null,activeLevel=levels[0];
+    const START_LIVES=5;
+    const MAX_LIVES=5;
+    let currentIndex=0,score=0,combo=1,lives=START_LIVES,correctStreak=0,answerCards=[],gameMode='easy',modalAction='restart',autoNextTimer=null,targetSet=null,activeLevel=levels[0];
     const $=id=>document.getElementById(id);
     const answerZone=$('answerZone'),cardBank=$('cardBank'),progressBar=$('progressBar');
 
@@ -452,7 +460,7 @@
       if($('hardModeBtn'))$('hardModeBtn').classList.toggle('active',gameMode==='hard');
       $('modeLabel').textContent=gameMode==='easy'?'โหมดง่าย':'โหมดยาก';
     }
-    function startGame(){currentIndex=0;score=0;combo=1;lives=3;answerCards=[];$('startScreen').classList.remove('show');loadQuestion();updateUI()}
+    function startGame(){currentIndex=0;score=0;combo=1;lives=START_LIVES;correctStreak=0;answerCards=[];$('startScreen').classList.remove('show');loadQuestion();updateUI()}
     function getIds(){return activeLevel.mode===2?ids2:ids3}
     function getData(){return activeLevel.mode===2?data2:data3}
 
@@ -492,6 +500,23 @@
     }
     function clearAnswer(){answerCards=[];renderAnswer()}
 
+    function revealAnswer(){
+      if(lives<=0) return;
+      lives=Math.max(lives-1,0);
+      combo=1;
+      correctStreak=0;
+      updateUI();
+      const answerText=(activeLevel.show||activeLevel.expr).join(' ');
+      modalAction=lives===0?'revealNoLives':'reveal';
+      $('modalEmoji').textContent='👀';
+      $('modalTitle').textContent='เฉลย';
+      $('modalText').textContent=`เสียหัวใจ 1 ดวง • ตัวอย่างคำตอบ: ${answerText}`;
+      $('modalButton').style.display='block';
+      $('modalButton').textContent='ปิด';
+      $('confetti').innerHTML='';
+      $('overlay').classList.add('show');
+    }
+
     function checkAnswer(){
       if(!answerCards.length){showWrongCard('ยังไม่ได้เลือกคำตอบ','แตะปุ่มสัญลักษณ์ด้านล่างเพื่อสร้างนิพจน์ก่อนนะ');shake(answerZone);return}
       let userSet;
@@ -499,12 +524,16 @@
       if(equalSets(userSet,targetSet)){
         score+=10*combo;
         combo=Math.min(combo+1,5);
+        correctStreak++;
+        const gotBonusHeart = correctStreak % 10 === 0 && lives < MAX_LIVES;
+        if(gotBonusHeart) lives++;
         updateUI();
         if(navigator.vibrate)navigator.vibrate([30,30,30]);
-        showCorrectCard((activeLevel.show||activeLevel.expr).join(' '));
+        showCorrectCard((activeLevel.show||activeLevel.expr).join(' '), gotBonusHeart);
       }else{
         lives=Math.max(lives-1,0);
         combo=1;
+        correctStreak=0;
         updateUI();
         shake(answerZone);
         if(navigator.vibrate)navigator.vibrate(80);
@@ -515,14 +544,14 @@
 
     function handleNoLives(){
       if(gameMode==='easy'){
-        lives=3;combo=1;answerCards=[];renderAnswer();updateUI();showPracticeCard();
+        lives=START_LIVES;combo=1;correctStreak=0;answerCards=[];renderAnswer();updateUI();showPracticeCard();
       }else showGameOver();
     }
     function nextQuestion(){currentIndex=(currentIndex+1)%levels.length;loadQuestion()}
     function updateUI(){
       $('score').textContent=score;
-      $('comboText').textContent=`Combo x${combo}`;
-      $('lifeText').textContent='❤️'.repeat(lives)+'🤍'.repeat(3-lives);
+      $('comboText').textContent=`Combo x${combo} • Streak ${correctStreak}`;
+      $('lifeText').textContent='❤️'.repeat(lives)+'🤍'.repeat(MAX_LIVES-lives);
       $('levelText').textContent=`ด่านที่ ${currentIndex+1} / ${levels.length}`;
       progressBar.style.width=((currentIndex+1)/levels.length*100)+'%';
       updateModeUI();
@@ -559,11 +588,11 @@
       function op(a,b,o){const r={};ids.forEach(id=>{if(o==='∪')r[id]=a[id]||b[id];if(o==='∩')r[id]=a[id]&&b[id];if(o==='−')r[id]=a[id]&&!b[id]});return r}
     }
 
-    function showCorrectCard(answerText){
+    function showCorrectCard(answerText, gotBonusHeart=false){
       modalAction='none';
-      $('modalEmoji').textContent='🎉';
-      $('modalTitle').textContent='ถูกต้อง!';
-      $('modalText').textContent=`ตัวอย่างคำตอบ: ${answerText}`;
+      $('modalEmoji').textContent=gotBonusHeart?'❤️':'🎉';
+      $('modalTitle').textContent=gotBonusHeart?'ถูกต้อง! ได้หัวใจเพิ่ม':'ถูกต้อง!';
+      $('modalText').textContent=gotBonusHeart?`ตอบถูกครบ 10 ข้อติดกัน ได้หัวใจเพิ่ม 1 ดวง • ตัวอย่างคำตอบ: ${answerText}`:`ตัวอย่างคำตอบ: ${answerText}`;
       $('modalButton').style.display='none';
       makeConfetti();
       $('overlay').classList.add('show');
@@ -602,8 +631,12 @@
     }
     function handleModalButton(){
       $('overlay').classList.remove('show');
-      if(modalAction==='wrong'||modalAction==='practice')return;
-      if(modalAction==='restart'){currentIndex=0;score=0;combo=1;lives=3;answerCards=[];loadQuestion();updateUI()}
+      if(modalAction==='revealNoLives'){
+        setTimeout(()=>handleNoLives(),120);
+        return;
+      }
+      if(modalAction==='wrong'||modalAction==='practice'||modalAction==='reveal')return;
+      if(modalAction==='restart'){currentIndex=0;score=0;combo=1;lives=START_LIVES;correctStreak=0;answerCards=[];loadQuestion();updateUI()}
     }
     function makeConfetti(){
       const box=$('confetti');box.innerHTML='';
