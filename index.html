@@ -232,7 +232,8 @@
           <button id="easyModeBtn" class="mode-card active" onclick="selectMode('easy')"><strong>โหมดง่าย</strong><span>หัวใจหมด เติมใหม่และอยู่ข้อเดิม</span></button>
           <button id="hardModeBtn" class="mode-card" onclick="selectMode('hard')"><strong>โหมดยาก</strong><span>หัวใจหมด Game Over</span></button>
         </div>
-        <button class="start-btn" onclick="startGame()">เริ่มเกม</button>
+        <button id="continueBtn" class="start-btn" style="display:none;background:linear-gradient(135deg,#16a34a,#22c55e);" onclick="continueGame()">เล่นต่อ</button>
+        <button class="start-btn" onclick="startGame()">เริ่มเกมใหม่</button>
       </div>
     </section>
 
@@ -292,7 +293,7 @@
           <circle id="bcOnly3" class="region off" cx="370" cy="190" r="95" clip-path="url(#clipC3)" mask="url(#maskNotA3)"></circle>
           <circle id="abc3" class="region off" cx="250" cy="190" r="95" clip-path="url(#clipB3)" mask="url(#maskOnlyC3)"></circle>
           <circle class="circle-outline" cx="250" cy="190" r="95"></circle><circle class="circle-outline" cx="370" cy="190" r="95"></circle><circle class="circle-outline" cx="310" cy="270" r="95"></circle>
-          <text class="label" x="158" y="98">A</text><text class="label" x="455" y="98">B</text><text class="label" x="300" y="382">C</text><text class="label" x="522" y="92">U</text>
+          <text class="label" x="158" y="98">A</text><text class="label" x="455" y="98">B</text><text class="label" x="300" y="410">C</text><text class="label" x="522" y="92">U</text>
         </svg>
       </article>
 
@@ -449,18 +450,41 @@
 
     const START_LIVES=5;
     const MAX_LIVES=5;
+    const SAVE_KEY='vennQuestABC100_save_v1';
     let currentIndex=0,score=0,combo=1,lives=START_LIVES,correctStreak=0,answerCards=[],gameMode='easy',modalAction='restart',autoNextTimer=null,targetSet=null,activeLevel=levels[0];
     const $=id=>document.getElementById(id);
     const answerZone=$('answerZone'),cardBank=$('cardBank'),progressBar=$('progressBar');
 
-    function init(){loadQuestion();updateModeUI()}
-    function selectMode(mode){gameMode=mode;updateModeUI()}
+    function init(){loadQuestion();updateModeUI();updateContinueButton()}
+    function selectMode(mode){gameMode=mode;updateModeUI();saveProgress()}
     function updateModeUI(){
       if($('easyModeBtn'))$('easyModeBtn').classList.toggle('active',gameMode==='easy');
       if($('hardModeBtn'))$('hardModeBtn').classList.toggle('active',gameMode==='hard');
       $('modeLabel').textContent=gameMode==='easy'?'โหมดง่าย':'โหมดยาก';
     }
-    function startGame(){currentIndex=0;score=0;combo=1;lives=START_LIVES;correctStreak=0;answerCards=[];$('startScreen').classList.remove('show');loadQuestion();updateUI()}
+    function startGame(){currentIndex=0;score=0;combo=1;lives=START_LIVES;correctStreak=0;answerCards=[];clearSavedProgress();$('startScreen').classList.remove('show');loadQuestion();updateUI();saveProgress()}
+
+    function continueGame(){
+      const data=getSavedProgress();
+      if(!data){startGame();return}
+      currentIndex=Number(data.currentIndex)||0;
+      score=Number(data.score)||0;
+      combo=Number(data.combo)||1;
+      lives=Number(data.lives)||START_LIVES;
+      correctStreak=Number(data.correctStreak)||0;
+      gameMode=data.gameMode||'easy';
+      answerCards=Array.isArray(data.answerCards)?data.answerCards:[];
+      $('startScreen').classList.remove('show');
+      activeLevel=levels[currentIndex]||levels[0];
+      $('diagram2').classList.toggle('diagram-active',activeLevel.mode===2);
+      $('diagram3').classList.toggle('diagram-active',activeLevel.mode===3);
+      targetSet=evaluate(activeLevel.expr);
+      paint(targetSet);
+      renderCardBank();
+      renderAnswer();
+      updateUI();
+      saveProgress();
+    }
     function getIds(){return activeLevel.mode===2?ids2:ids3}
     function getData(){return activeLevel.mode===2?data2:data3}
 
@@ -488,17 +512,18 @@
       paint(targetSet);
       renderCardBank();
       updateUI();
+      saveProgress();
     }
 
-    function addCard(symbol){answerCards.push(symbol);renderAnswer();if(navigator.vibrate)navigator.vibrate(18)}
-    function removeCard(index){answerCards.splice(index,1);renderAnswer();if(navigator.vibrate)navigator.vibrate(12)}
-    function backspaceAnswer(){if(!answerCards.length)return;answerCards.pop();renderAnswer();if(navigator.vibrate)navigator.vibrate(12)}
+    function addCard(symbol){answerCards.push(symbol);renderAnswer();saveProgress();if(navigator.vibrate)navigator.vibrate(18)}
+    function removeCard(index){answerCards.splice(index,1);renderAnswer();saveProgress();if(navigator.vibrate)navigator.vibrate(12)}
+    function backspaceAnswer(){if(!answerCards.length)return;answerCards.pop();renderAnswer();saveProgress();if(navigator.vibrate)navigator.vibrate(12)}
     function renderAnswer(){
       answerZone.innerHTML='';
       if(!answerCards.length){answerZone.innerHTML='<span class="placeholder">แตะปุ่มสัญลักษณ์ด้านล่าง</span>';return}
       answerCards.forEach((symbol,index)=>{const token=document.createElement('span');token.className='expr-token';token.textContent=symbol;token.onclick=()=>removeCard(index);answerZone.appendChild(token)})
     }
-    function clearAnswer(){answerCards=[];renderAnswer()}
+    function clearAnswer(){answerCards=[];renderAnswer();saveProgress()}
 
     function revealAnswer(){
       if(lives<=0) return;
@@ -506,6 +531,7 @@
       combo=1;
       correctStreak=0;
       updateUI();
+      saveProgress();
       const answerText=(activeLevel.show||activeLevel.expr).join(' ');
       modalAction=lives===0?'revealNoLives':'reveal';
       $('modalEmoji').textContent='👀';
@@ -528,6 +554,7 @@
         const gotBonusHeart = correctStreak % 10 === 0 && lives < MAX_LIVES;
         if(gotBonusHeart) lives++;
         updateUI();
+        saveProgress();
         if(navigator.vibrate)navigator.vibrate([30,30,30]);
         showCorrectCard((activeLevel.show||activeLevel.expr).join(' '), gotBonusHeart);
       }else{
@@ -535,6 +562,7 @@
         combo=1;
         correctStreak=0;
         updateUI();
+        saveProgress();
         shake(answerZone);
         if(navigator.vibrate)navigator.vibrate(80);
         if(lives===0)setTimeout(()=>handleNoLives(),250);
@@ -544,10 +572,18 @@
 
     function handleNoLives(){
       if(gameMode==='easy'){
-        lives=START_LIVES;combo=1;correctStreak=0;answerCards=[];renderAnswer();updateUI();showPracticeCard();
+        lives=START_LIVES;combo=1;correctStreak=0;answerCards=[];renderAnswer();updateUI();saveProgress();showPracticeCard();
       }else showGameOver();
     }
-    function nextQuestion(){currentIndex=(currentIndex+1)%levels.length;loadQuestion()}
+    function nextQuestion(){
+      currentIndex=(currentIndex+1)%levels.length;
+      if(currentIndex===0){
+        showFinishCard();
+        clearSavedProgress();
+        return;
+      }
+      loadQuestion();
+    }
     function updateUI(){
       $('score').textContent=score;
       $('comboText').textContent=`Combo x${combo} • Streak ${correctStreak}`;
@@ -635,9 +671,48 @@
         setTimeout(()=>handleNoLives(),120);
         return;
       }
+      if(modalAction==='finish'){
+        $('startScreen').classList.add('show');
+        updateContinueButton();
+        return;
+      }
       if(modalAction==='wrong'||modalAction==='practice'||modalAction==='reveal')return;
-      if(modalAction==='restart'){currentIndex=0;score=0;combo=1;lives=START_LIVES;correctStreak=0;answerCards=[];loadQuestion();updateUI()}
+      if(modalAction==='restart'){currentIndex=0;score=0;combo=1;lives=START_LIVES;correctStreak=0;answerCards=[];clearSavedProgress();loadQuestion();updateUI();saveProgress()}
     }
+    function showFinishCard(){
+      modalAction='finish';
+      $('modalEmoji').textContent='🏆';
+      $('modalTitle').textContent='จบเกม!';
+      $('modalText').textContent=`คุณผ่านครบ 100 ด่านแล้ว คะแนนรวม ${score} คะแนน`;
+      $('modalButton').style.display='block';
+      $('modalButton').textContent='กลับหน้าเริ่ม';
+      makeConfetti();
+      $('overlay').classList.add('show');
+    }
+
+    function getSavedProgress(){
+      try{return JSON.parse(localStorage.getItem(SAVE_KEY)||'null')}catch(e){return null}
+    }
+    function saveProgress(){
+      if(!$('startScreen') || $('startScreen').classList.contains('show')) return;
+      const data={currentIndex,score,combo,lives,correctStreak,gameMode,answerCards,updatedAt:Date.now()};
+      try{localStorage.setItem(SAVE_KEY,JSON.stringify(data));updateContinueButton()}catch(e){}
+    }
+    function clearSavedProgress(){
+      try{localStorage.removeItem(SAVE_KEY);updateContinueButton()}catch(e){}
+    }
+    function updateContinueButton(){
+      const btn=$('continueBtn');
+      if(!btn) return;
+      const data=getSavedProgress();
+      if(data && Number.isFinite(Number(data.currentIndex))){
+        btn.style.display='block';
+        btn.textContent=`เล่นต่อ ด่านที่ ${Number(data.currentIndex)+1}`;
+      }else{
+        btn.style.display='none';
+      }
+    }
+
     function makeConfetti(){
       const box=$('confetti');box.innerHTML='';
       const colors=['#2563eb','#7c3aed','#16a34a','#f59e0b','#ef4444'];
