@@ -358,8 +358,8 @@ body {
   left: 0;
   right: 0;
 
-  /* แก้แถบขาวล่าง iOS PWA */
-  bottom: calc(-1 * env(safe-area-inset-bottom));
+  /* ดันพื้นหลังลงไปใต้ขอบ iOS PWA ให้พ้นแถบขาว */
+  bottom: -90px;
 
   min-height: 100vh;
   min-height: 100dvh;
@@ -368,7 +368,7 @@ body {
   padding:
     calc(18px + env(safe-area-inset-top))
     18px
-    calc(30px + env(safe-area-inset-bottom));
+    calc(30px + env(safe-area-inset-bottom) + 90px);
 
   background:
     radial-gradient(circle at 50% 12%, rgba(34,211,238,.45), transparent 28%),
@@ -639,15 +639,15 @@ body {
   overflow: hidden;
 }
 
-    @supports (-webkit-touch-callout: none) {
+@supports (-webkit-touch-callout: none) {
   html,
   body {
     background: #5b21b6 !important;
   }
 
   .start-screen {
-    height: calc(100vh + env(safe-area-inset-bottom));
-    height: calc(100dvh + env(safe-area-inset-bottom));
+    height: calc(100vh + 90px);
+    height: calc(100dvh + 90px);
   }
 
   .app {
@@ -1030,6 +1030,18 @@ svg {
 .bottom-panel {
   margin: 0 16px calc(10px + env(safe-area-inset-bottom));
   padding: 13px;
+}
+
+    .start-screen.show::after {
+  content: "";
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: -120px;
+  height: 180px;
+  background: #5b21b6;
+  z-index: 0;
+  pointer-events: none;
 }
 
     
