@@ -408,7 +408,7 @@
 
 
 .splash-icon-wrap {
-   width: min(70vw, 260px);
+   width: min(66vw, 240px);
   aspect-ratio: 1 / 1;
   margin: 0 auto 18px;
   border-radius: 32px;
@@ -565,22 +565,18 @@
   transform: translateY(-1px) scale(.98);
 }
 .app-credit {
-  position: absolute;
-  left: 18px;
-  right: 18px;
-  bottom: calc(14px + env(safe-area-inset-bottom));
-  z-index: 4;
+  margin-top: 12px;
   text-align: center;
-  color: rgba(255,255,255,.78);
+  color: rgba(255,255,255,.82);
   font-size: .72rem;
   font-weight: 600;
   line-height: 1.45;
-  text-shadow: 0 2px 8px rgba(15,23,42,.28);
+  text-shadow: 0 2px 8px rgba(15,23,42,.30);
   pointer-events: none;
 }
 
 .app-credit div:first-child {
-  color: rgba(255,255,255,.94);
+  color: rgba(255,255,255,.96);
   font-weight: 800;
   letter-spacing: .3px;
 }
@@ -634,12 +630,13 @@
     <button class="start-btn" onclick="startGame()">
       เริ่มเกมใหม่
     </button>
-  </div>
     <div class="app-credit">
     <div id="startVersion">v1.0.0</div>
     <div>© 2026 VENN Quest</div>
     <div>Powered by Pitchaya</div>
   </div>
+  </div>
+
 </section>
 
     <header class="topbar">
