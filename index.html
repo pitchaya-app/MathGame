@@ -1086,13 +1086,52 @@ body::before {
     pointer-events: none;
   }
 }
+/* ===== FINAL iOS PWA White Bottom Fix ===== */
+html,
+body {
+  margin: 0 !important;
+  padding: 0 !important;
+  width: 100% !important;
+  min-height: 100vh !important;
+  min-height: 100dvh !important;
+  background: #5b21b6 !important;
+  overflow-x: hidden !important;
+}
 
+.pwa-bg-fix {
+  position: fixed;
+  inset: -160px 0 -240px 0;
+  z-index: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at 50% 12%, rgba(34,211,238,.45), transparent 28%),
+    radial-gradient(circle at 20% 22%, rgba(59,130,246,.34), transparent 26%),
+    radial-gradient(circle at 84% 76%, rgba(168,85,247,.38), transparent 30%),
+    linear-gradient(160deg, #0284c7 0%, #1d4ed8 45%, #5b21b6 100%);
+}
+
+.app {
+  position: relative;
+  z-index: 1;
+}
+
+.start-screen {
+  z-index: 20;
+  background: transparent !important;
+}
+
+.start-screen.show {
+  background: transparent !important;
+}
     
 
   </style>
 </head>
 <body>
+  <div class="pwa-bg-fix"></div>
+
   <main class="app">
+  
 <section id="startScreen" class="start-screen show">
   <div class="start-card">
     <div class="splash-icon-wrap">
