@@ -4,588 +4,119 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <meta name="theme-color" content="#2563eb" />
-  <title>Venn Quest | เกมเซต Mobile Pro</title>
+  <title>Venn Quest ABC | 60 Levels</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
     :root{
-      --bg:#edf5ff;
-      --bg2:#f5f0ff;
-      --ink:#0f172a;
-      --muted:#64748b;
-      --primary:#2563eb;
-      --primary2:#7c3aed;
-      --good:#16a34a;
-      --bad:#dc2626;
-      --warn:#f59e0b;
-      --card:#ffffff;
-      --line:rgba(148,163,184,.38);
-      --shadow:0 18px 45px rgba(37,99,235,.16);
-      --bottom-h:180px;
+      --bg:#edf5ff; --bg2:#f5f0ff; --ink:#0f172a; --muted:#64748b;
+      --primary:#2563eb; --primary2:#7c3aed; --good:#16a34a; --bad:#dc2626;
+      --line:rgba(148,163,184,.38); --shadow:0 18px 45px rgba(37,99,235,.16);
     }
-
     *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-    html,body{height:100%}
+    html,body{min-height:100%}
     body{
-      margin:0;
-      font-family:"Kanit",system-ui,sans-serif;
-      color:var(--ink);
-      background:
-        radial-gradient(circle at 15% 0%,rgba(37,99,235,.22),transparent 32%),
-        radial-gradient(circle at 90% 8%,rgba(124,58,237,.20),transparent 34%),
-        linear-gradient(135deg,var(--bg),var(--bg2));
-      overflow:auto;
+      margin:0; font-family:"Kanit",system-ui,sans-serif; color:var(--ink); overflow:auto;
+      background:radial-gradient(circle at 15% 0%,rgba(37,99,235,.22),transparent 32%),radial-gradient(circle at 90% 8%,rgba(124,58,237,.20),transparent 34%),linear-gradient(135deg,var(--bg),var(--bg2));
     }
-
-    .app{
-      min-height:100dvh;
-      display:flex;
-      flex-direction:column;
-      max-width:560px;
-      margin:0 auto;
-      position:relative;
-      background:rgba(255,255,255,.12);
-      padding-bottom:calc(12px + env(safe-area-inset-bottom));
-    }
-
-    .topbar{
-      padding:calc(10px + env(safe-area-inset-top)) 14px 10px;
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:10px;
-      flex:0 0 auto;
-    }
-
-    .brand{display:flex;align-items:center;gap:10px;min-width:0}
-    .logo{
-      width:42px;height:42px;border-radius:16px;
-      display:grid;place-items:center;
-      color:#fff;font-weight:800;font-size:1.16rem;
-      background:linear-gradient(135deg,var(--primary),var(--primary2));
-      box-shadow:0 12px 28px rgba(37,99,235,.28);
-      flex:0 0 auto;
-    }
-    .brand-text{min-width:0}
-    .brand-title{font-size:1.05rem;font-weight:800;line-height:1.05;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-    .brand-sub{font-size:.78rem;color:var(--muted);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-
-    .score-life{display:flex;align-items:center;gap:6px;flex:0 0 auto}
-    .scorebox{
-      display:flex;align-items:center;gap:5px;
-      background:rgba(255,255,255,.84);
-      border:1px solid var(--line);
-      border-radius:999px;
-      padding:7px 9px;
-      box-shadow:0 10px 26px rgba(15,23,42,.08);
-      white-space:nowrap;
-      font-weight:800;
-      font-size:.94rem;
-    }
-    .scorebox span{color:var(--primary)}
-    .life-box span{color:inherit;font-size:.92rem;letter-spacing:-2px}
-
-    .progress-wrap{padding:0 14px 8px;flex:0 0 auto}
-    .progress-meta{display:flex;justify-content:space-between;align-items:center;color:var(--muted);font-size:.78rem;margin-bottom:6px;font-weight:600}
-    .progress{height:10px;background:rgba(226,232,240,.95);border-radius:999px;overflow:hidden;border:1px solid rgba(255,255,255,.75)}
-    .progress-bar{height:100%;width:0%;background:linear-gradient(90deg,var(--primary),var(--primary2));border-radius:999px;transition:.25s ease}
-
-    .game-scroll{
-      flex:1 1 auto;
-      overflow:visible;
-      padding:0 14px 10px;
-      overscroll-behavior:contain;
-    }
-    .game-scroll::-webkit-scrollbar{display:none}
-
-    .venn-card{
-      background:rgba(255,255,255,.88);
-      border:1px solid var(--line);
-      border-radius:28px;
-      min-height:330px;
-      display:grid;
-      place-items:center;
-      padding:10px;
-      box-shadow:var(--shadow);
-      position:relative;
-      overflow:hidden;
-    }
-    .venn-card::before{
-      content:"";position:absolute;inset:0;
-      background:repeating-linear-gradient(45deg,rgba(37,99,235,.035) 0 10px,transparent 10px 20px);
-      pointer-events:none;
-    }
-    svg{width:100%;max-width:500px;height:auto;position:relative;z-index:1;display:block}
-    .universe{fill:#fff;stroke:#475569;stroke-width:2.5}
-    .region{stroke:none;transition:fill .22s ease,opacity .22s ease}
-    .region.on{fill:rgba(37,99,235,.62)}
-    .region.off{fill:rgba(226,232,240,.84)}
-    .circle-outline{fill:none;stroke:rgba(15,23,42,.76);stroke-width:3}
-    .label{font-size:31px;font-weight:800;fill:#0f172a}
-
-    .answer-strip{
-      margin-top:10px;
-    }
-    .answer-row{
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-      gap:10px;
-      margin-bottom:7px;
-      padding:0 2px;
-    }
-    .answer-title{font-size:.9rem;font-weight:800;color:#334155}
-    .mini-btn{
-      border:none;border-radius:999px;background:rgba(255,255,255,.75);color:#334155;
-      padding:6px 10px;font-family:"Kanit";font-weight:800;font-size:.76rem;cursor:pointer;
-      border:1px solid var(--line);
-    }
-    .expression-box{
-      min-height:64px;
-      border:2px solid rgba(37,99,235,.30);
-      background:rgba(239,246,255,.86);
-      border-radius:20px;
-      padding:10px 12px;
-      display:flex;
-      align-items:center;
-      flex-wrap:wrap;
-      gap:4px;
-      font-family:"Times New Roman","Cambria Math","STIX Two Math",serif;
-      font-size:2rem;
-      font-weight:800;
-      box-shadow:0 10px 26px rgba(15,23,42,.07);
-    }
-    .expr-token{
-      display:inline-flex;
-      align-items:center;
-      justify-content:center;
-      min-width:22px;
-      padding:0 2px;
-      cursor:pointer;
-      border-radius:8px;
-    }
-    .expr-token:active{background:rgba(245,158,11,.16);transform:scale(.94)}
-    .placeholder{font-family:"Kanit",sans-serif;color:#64748b;font-size:.92rem;font-weight:600}
-
-    .bottom-panel{
-      position:relative;
-      left:auto;right:auto;bottom:auto;
-      min-height:auto;
-      margin:0 14px 10px;
-      padding:10px 12px 12px;
-      background:rgba(255,255,255,.88);
-      backdrop-filter:blur(20px);
-      border:1px solid rgba(148,163,184,.38);
-      box-shadow:0 14px 34px rgba(15,23,42,.10);
-      border-radius:24px;
-      z-index:5;
-    }
-    .sheet-handle{display:none}
-    .bank-head{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:8px}
-    .bank-head strong{font-size:.96rem}
-    .bank-head span{font-size:.76rem;color:var(--muted);font-weight:600}
-    .button-bank{
-      display:grid;
-      grid-template-columns:repeat(9,1fr);
-      gap:6px;
-    }
-    .symbol-btn{
-      border:1px solid rgba(148,163,184,.30);
-      height:42px;
-      border-radius:15px;
-      background:#fff;
-      color:#0f172a;
-      font-family:"Times New Roman","Cambria Math","STIX Two Math",serif;
-      font-size:1.45rem;
-      font-weight:800;
-      box-shadow:0 8px 16px rgba(15,23,42,.09);
-      cursor:pointer;
-      touch-action:manipulation;
-      display:grid;
-      place-items:center;
-      line-height:1;
-    }
-    .symbol-btn:active{transform:scale(.94);box-shadow:0 4px 10px rgba(15,23,42,.10)}
-    .symbol-btn.future{opacity:.42;border-style:dashed}
-    .symbol-btn.future::after{content:"เร็วๆ นี้";font-family:"Kanit";font-size:.45rem;color:#64748b;display:block;margin-top:1px}
-
-    .submit-btn{
-      margin-top:9px;
-      border:none;border-radius:18px;min-height:48px;width:100%;
-      padding:10px 12px;
-      font-family:"Kanit";font-size:1rem;font-weight:800;cursor:pointer;
-      color:white;background:linear-gradient(135deg,var(--primary),var(--primary2));
-      box-shadow:0 12px 24px rgba(37,99,235,.22);
-      touch-action:manipulation;
-    }
-    .submit-btn:active{transform:scale(.98)}
-
-    .overlay,.start-screen{
-      position:absolute;inset:0;z-index:20;display:none;place-items:center;
-      background:rgba(15,23,42,.28);backdrop-filter:blur(8px);padding:18px;
-    }
-    .overlay.show,.start-screen.show{display:grid;animation:fadeIn .18s ease}
-    .modal,.start-card{
-      width:min(100%,390px);background:#fff;border-radius:30px;padding:22px;text-align:center;
-      box-shadow:0 30px 80px rgba(15,23,42,.24);animation:pop .32s ease;
-    }
-    .modal-emoji,.start-logo{font-size:3.4rem;line-height:1}
-    .start-logo{width:76px;height:76px;border-radius:26px;margin:0 auto 10px;display:grid;place-items:center;color:#fff;background:linear-gradient(135deg,var(--primary),var(--primary2));font-weight:800;box-shadow:0 18px 36px rgba(37,99,235,.25)}
-    .modal h2,.start-card h1{margin:8px 0 4px;font-size:1.55rem}
-    .modal p,.start-card p{margin:0;color:#64748b;line-height:1.45}
-    .modal .modal-btn,.start-btn{
-      margin-top:16px;width:100%;border:none;border-radius:17px;min-height:50px;padding:10px 12px;
-      font-family:"Kanit";font-size:1rem;font-weight:800;cursor:pointer;color:white;
-      background:linear-gradient(135deg,var(--primary),var(--primary2));box-shadow:0 12px 24px rgba(37,99,235,.22);
-    }
-    .mode-grid{display:grid;grid-template-columns:1fr;gap:10px;margin-top:18px}
-    .mode-card{border:2px solid var(--line);border-radius:20px;background:#f8fafc;padding:13px;text-align:left;font-family:"Kanit";cursor:pointer}
-    .mode-card strong{display:block;font-size:1rem;color:#0f172a}
-    .mode-card span{display:block;font-size:.84rem;color:#64748b;margin-top:3px}
-    .mode-card.active{border-color:rgba(37,99,235,.75);background:#eff6ff;box-shadow:0 12px 25px rgba(37,99,235,.12)}
-
-    .confetti{position:absolute;inset:0;pointer-events:none;overflow:hidden}
-    .confetti i{position:absolute;width:9px;height:16px;border-radius:4px;top:-20px;animation:fall 1.4s linear forwards;background:var(--primary)}
-
-    @keyframes fadeIn{from{opacity:0}to{opacity:1}}
-    @keyframes pop{from{transform:scale(.88) translateY(14px);opacity:.4}to{transform:scale(1) translateY(0);opacity:1}}
-    @keyframes fall{to{transform:translateY(105dvh) rotate(420deg);opacity:.95}}
-
-    @media (min-width:720px){
-      body{overflow:auto;padding:16px}
-      .app{height:auto;min-height:calc(100dvh - 32px);border-radius:36px;overflow:hidden;box-shadow:0 30px 90px rgba(15,23,42,.14)}
-    }
-
-    @media (max-width:390px){
-      :root{--bottom-h:188px}
-      .venn-card{min-height:305px}
-      .expression-box{min-height:58px;font-size:1.75rem}
-      .symbol-btn{height:43px;font-size:1.32rem;border-radius:14px}
-      .button-bank{gap:6px}
-      .life-box span{font-size:.82rem}
-      .scorebox{padding:7px 8px}
-    }
+    .app{min-height:100dvh;display:flex;flex-direction:column;max-width:560px;margin:0 auto;position:relative;background:rgba(255,255,255,.12);padding-bottom:calc(12px + env(safe-area-inset-bottom))}
+    .topbar{padding:calc(10px + env(safe-area-inset-top)) 14px 10px;display:flex;align-items:center;justify-content:space-between;gap:10px;flex:0 0 auto}
+    .brand{display:flex;align-items:center;gap:10px;min-width:0}.logo{width:42px;height:42px;border-radius:16px;display:grid;place-items:center;color:#fff;font-weight:800;font-size:1.16rem;background:linear-gradient(135deg,var(--primary),var(--primary2));box-shadow:0 12px 28px rgba(37,99,235,.28);flex:0 0 auto}.brand-title{font-size:1.05rem;font-weight:800;line-height:1.05;white-space:nowrap}.brand-sub{font-size:.78rem;color:var(--muted);margin-top:2px;white-space:nowrap}.score-life{display:flex;align-items:center;gap:6px;flex:0 0 auto}.scorebox{display:flex;align-items:center;gap:5px;background:rgba(255,255,255,.84);border:1px solid var(--line);border-radius:999px;padding:7px 9px;box-shadow:0 10px 26px rgba(15,23,42,.08);white-space:nowrap;font-weight:800;font-size:.94rem}.scorebox span{color:var(--primary)}.life-box span{color:inherit;font-size:.9rem;letter-spacing:-2px}
+    .progress-wrap{padding:0 14px 8px;flex:0 0 auto}.progress-meta{display:flex;justify-content:space-between;align-items:center;color:var(--muted);font-size:.78rem;margin-bottom:6px;font-weight:700}.progress{height:10px;background:rgba(226,232,240,.95);border-radius:999px;overflow:hidden;border:1px solid rgba(255,255,255,.75)}.progress-bar{height:100%;width:0%;background:linear-gradient(90deg,var(--primary),var(--primary2));border-radius:999px;transition:.25s ease}
+    .game-scroll{flex:1 1 auto;padding:0 14px 10px;overflow:visible}.venn-card{background:rgba(255,255,255,.88);border:1px solid var(--line);border-radius:28px;min-height:330px;display:grid;place-items:center;padding:10px;box-shadow:var(--shadow);position:relative;overflow:hidden}.venn-card:before{content:"";position:absolute;inset:0;background:repeating-linear-gradient(45deg,rgba(37,99,235,.035) 0 10px,transparent 10px 20px)}svg{width:100%;max-width:500px;height:auto;position:relative;z-index:1;display:block}.universe{fill:#fff;stroke:#475569;stroke-width:2.5}.region{stroke:none;transition:fill .22s ease}.region.on{fill:rgba(37,99,235,.62)}.region.off{fill:rgba(226,232,240,.84)}.circle-outline{fill:none;stroke:rgba(15,23,42,.76);stroke-width:3}.label{font-size:31px;font-weight:800;fill:#0f172a}
+    .answer-strip{margin-top:10px}.answer-row{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:7px;padding:0 2px}.answer-title{font-size:.9rem;font-weight:800;color:#334155}.mini-btn{border:none;border-radius:999px;background:rgba(255,255,255,.75);color:#334155;padding:6px 10px;font-family:"Kanit";font-weight:800;font-size:.76rem;cursor:pointer;border:1px solid var(--line)}.expression-box{min-height:64px;border:2px solid rgba(37,99,235,.30);background:rgba(239,246,255,.86);border-radius:20px;padding:10px 12px;display:flex;align-items:center;flex-wrap:wrap;gap:4px;font-family:"Times New Roman","Cambria Math","STIX Two Math",serif;font-size:1.85rem;font-weight:800;box-shadow:0 10px 26px rgba(15,23,42,.07)}.expr-token{display:inline-flex;align-items:center;justify-content:center;min-width:22px;padding:0 2px;cursor:pointer;border-radius:8px}.expr-token:active{background:rgba(245,158,11,.16);transform:scale(.94)}.placeholder{font-family:"Kanit",sans-serif;color:#64748b;font-size:.92rem;font-weight:600}
+    .bottom-panel{position:relative;margin:0 14px 10px;padding:10px 12px 12px;background:rgba(255,255,255,.88);backdrop-filter:blur(20px);border:1px solid rgba(148,163,184,.38);box-shadow:0 14px 34px rgba(15,23,42,.10);border-radius:24px;z-index:5}.bank-head{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:8px}.bank-head strong{font-size:.96rem}.bank-head span{font-size:.76rem;color:var(--muted);font-weight:600}.button-bank{display:grid;grid-template-columns:repeat(9,1fr);gap:6px}.symbol-btn{border:1px solid rgba(148,163,184,.30);height:42px;border-radius:15px;background:#fff;color:#0f172a;font-family:"Times New Roman","Cambria Math","STIX Two Math",serif;font-size:1.38rem;font-weight:800;box-shadow:0 8px 16px rgba(15,23,42,.09);cursor:pointer;touch-action:manipulation;display:grid;place-items:center;line-height:1}.symbol-btn:active{transform:scale(.94);box-shadow:0 4px 10px rgba(15,23,42,.10)}.submit-btn{margin-top:9px;border:none;border-radius:18px;min-height:48px;width:100%;padding:10px 12px;font-family:"Kanit";font-size:1rem;font-weight:800;cursor:pointer;color:white;background:linear-gradient(135deg,var(--primary),var(--primary2));box-shadow:0 12px 24px rgba(37,99,235,.22);touch-action:manipulation}.submit-btn:active{transform:scale(.98)}
+    .overlay,.start-screen{position:absolute;inset:0;z-index:20;display:none;place-items:center;background:rgba(15,23,42,.28);backdrop-filter:blur(8px);padding:18px}.overlay.show,.start-screen.show{display:grid;animation:fadeIn .18s ease}.modal,.start-card{width:min(100%,390px);background:#fff;border-radius:30px;padding:22px;text-align:center;box-shadow:0 30px 80px rgba(15,23,42,.24);animation:pop .32s ease}.modal-emoji,.start-logo{font-size:3.4rem;line-height:1}.start-logo{width:76px;height:76px;border-radius:26px;margin:0 auto 10px;display:grid;place-items:center;color:#fff;background:linear-gradient(135deg,var(--primary),var(--primary2));font-weight:800;box-shadow:0 18px 36px rgba(37,99,235,.25)}.modal h2,.start-card h1{margin:8px 0 4px;font-size:1.55rem}.modal p,.start-card p{margin:0;color:#64748b;line-height:1.45}.modal .modal-btn,.start-btn{margin-top:16px;width:100%;border:none;border-radius:17px;min-height:50px;padding:10px 12px;font-family:"Kanit";font-size:1rem;font-weight:800;cursor:pointer;color:white;background:linear-gradient(135deg,var(--primary),var(--primary2));box-shadow:0 12px 24px rgba(37,99,235,.22)}.mode-grid{display:grid;grid-template-columns:1fr;gap:10px;margin-top:18px}.mode-card{border:2px solid var(--line);border-radius:20px;background:#f8fafc;padding:13px;text-align:left;font-family:"Kanit";cursor:pointer}.mode-card strong{display:block;font-size:1rem;color:#0f172a}.mode-card span{display:block;font-size:.84rem;color:#64748b;margin-top:3px}.mode-card.active{border-color:rgba(37,99,235,.75);background:#eff6ff;box-shadow:0 12px 25px rgba(37,99,235,.12)}.confetti{position:absolute;inset:0;pointer-events:none;overflow:hidden}.confetti i{position:absolute;width:9px;height:16px;border-radius:4px;top:-20px;animation:fall 1.4s linear forwards;background:var(--primary)}
+    @keyframes fadeIn{from{opacity:0}to{opacity:1}}@keyframes pop{from{transform:scale(.88) translateY(14px);opacity:.4}to{transform:scale(1) translateY(0);opacity:1}}@keyframes fall{to{transform:translateY(105dvh) rotate(420deg);opacity:.95}}
+    @media (min-width:720px){body{padding:16px}.app{min-height:calc(100dvh - 32px);border-radius:36px;overflow:hidden;box-shadow:0 30px 90px rgba(15,23,42,.14)}}
+    @media (max-width:390px){.venn-card{min-height:305px}.expression-box{min-height:58px;font-size:1.65rem}.symbol-btn{height:40px;font-size:1.25rem;border-radius:14px}.button-bank{gap:6px}.life-box span{font-size:.82rem}.scorebox{padding:7px 8px}}
   </style>
 </head>
 <body>
   <main class="app">
     <section id="startScreen" class="start-screen show">
       <div class="start-card">
-        <div class="start-logo">∩</div>
-        <h1>Venn Quest</h1>
-        <p>เกมเรียงนิพจน์เซตบนมือถือ ดูภาพแรเงา แล้วแตะปุ่มสัญลักษณ์ให้ถูกต้อง</p>
-        <div class="mode-grid">
-          <button id="easyModeBtn" class="mode-card active" onclick="selectMode('easy')"><strong>โหมดง่าย</strong><span>หัวใจหมด เติมใหม่และอยู่ข้อเดิม</span></button>
-          <button id="hardModeBtn" class="mode-card" onclick="selectMode('hard')"><strong>โหมดยาก</strong><span>หัวใจหมด Game Over</span></button>
-        </div>
+        <div class="start-logo">∩</div><h1>Venn Quest ABC</h1><p>เกมเรียงนิพจน์เซต A, B และ C จำนวน 60 ด่าน</p>
+        <div class="mode-grid"><button id="easyModeBtn" class="mode-card active" onclick="selectMode('easy')"><strong>โหมดง่าย</strong><span>หัวใจหมด เติมใหม่และอยู่ข้อเดิม</span></button><button id="hardModeBtn" class="mode-card" onclick="selectMode('hard')"><strong>โหมดยาก</strong><span>หัวใจหมด Game Over</span></button></div>
         <button class="start-btn" onclick="startGame()">เริ่มเกม</button>
       </div>
     </section>
-
-    <header class="topbar">
-      <div class="brand">
-        <div class="logo">∩</div>
-        <div class="brand-text">
-          <div class="brand-title">Venn Quest</div>
-          <div class="brand-sub" id="modeLabel">โหมดง่าย</div>
-        </div>
-      </div>
-      <div class="score-life">
-        <div class="scorebox">⭐ <span id="score">0</span></div>
-        <div class="scorebox life-box"><span id="lifeText">❤️❤️❤️</span></div>
-      </div>
-    </header>
-
-    <div class="progress-wrap">
-      <div class="progress-meta">
-        <span id="levelText">ด่านที่ 1 / 8</span>
-        <span id="comboText">Combo x1</span>
-      </div>
-      <div class="progress"><div id="progressBar" class="progress-bar"></div></div>
-    </div>
-
+    <header class="topbar"><div class="brand"><div class="logo">∩</div><div class="brand-text"><div class="brand-title">Venn Quest ABC</div><div class="brand-sub" id="modeLabel">โหมดง่าย</div></div></div><div class="score-life"><div class="scorebox">⭐ <span id="score">0</span></div><div class="scorebox life-box"><span id="lifeText">❤️❤️❤️</span></div></div></header>
+    <div class="progress-wrap"><div class="progress-meta"><span id="levelText">ด่านที่ 1 / 60</span><span id="comboText">Combo x1</span></div><div class="progress"><div id="progressBar" class="progress-bar"></div></div></div>
     <section class="game-scroll">
       <article class="venn-card">
-        <svg viewBox="0 0 620 400" role="img" aria-label="แผนภาพเวนน์ 2 เซต">
+        <svg viewBox="0 0 620 430" role="img" aria-label="แผนภาพเวนน์ 3 เซต">
           <defs>
-            <clipPath id="clipU"><rect x="58" y="42" width="504" height="310" rx="26"></rect></clipPath>
-            <mask id="maskNotA"><rect x="0" y="0" width="620" height="400" fill="white"></rect><circle cx="255" cy="205" r="125" fill="black"></circle></mask>
-            <mask id="maskNotB"><rect x="0" y="0" width="620" height="400" fill="white"></rect><circle cx="365" cy="205" r="125" fill="black"></circle></mask>
-            <mask id="maskOutsideAB"><rect x="0" y="0" width="620" height="400" fill="white"></rect><circle cx="255" cy="205" r="125" fill="black"></circle><circle cx="365" cy="205" r="125" fill="black"></circle></mask>
-            <clipPath id="clipB"><circle cx="365" cy="205" r="125"></circle></clipPath>
+            <clipPath id="clipU"><rect x="58" y="46" width="504" height="340" rx="26"></rect></clipPath>
+            <clipPath id="clipB"><circle cx="372" cy="205" r="122"></circle></clipPath>
+            <clipPath id="clipC"><circle cx="310" cy="282" r="122"></circle></clipPath>
+            <mask id="maskOutsideABC"><rect x="0" y="0" width="620" height="430" fill="white"></rect><circle cx="248" cy="205" r="122" fill="black"></circle><circle cx="372" cy="205" r="122" fill="black"></circle><circle cx="310" cy="282" r="122" fill="black"></circle></mask>
+            <mask id="maskNotA"><rect x="0" y="0" width="620" height="430" fill="white"></rect><circle cx="248" cy="205" r="122" fill="black"></circle></mask>
+            <mask id="maskNotB"><rect x="0" y="0" width="620" height="430" fill="white"></rect><circle cx="372" cy="205" r="122" fill="black"></circle></mask>
+            <mask id="maskNotC"><rect x="0" y="0" width="620" height="430" fill="white"></rect><circle cx="310" cy="282" r="122" fill="black"></circle></mask>
+            <mask id="maskNotBC"><rect x="0" y="0" width="620" height="430" fill="white"></rect><circle cx="372" cy="205" r="122" fill="black"></circle><circle cx="310" cy="282" r="122" fill="black"></circle></mask>
+            <mask id="maskNotAC"><rect x="0" y="0" width="620" height="430" fill="white"></rect><circle cx="248" cy="205" r="122" fill="black"></circle><circle cx="310" cy="282" r="122" fill="black"></circle></mask>
+            <mask id="maskNotAB"><rect x="0" y="0" width="620" height="430" fill="white"></rect><circle cx="248" cy="205" r="122" fill="black"></circle><circle cx="372" cy="205" r="122" fill="black"></circle></mask>
+            <mask id="maskOnlyC"><rect x="0" y="0" width="620" height="430" fill="black"></rect><circle cx="310" cy="282" r="122" fill="white"></circle></mask>
           </defs>
-          <rect class="universe" x="58" y="42" width="504" height="310" rx="26"></rect>
-          <rect id="outside" class="region off" x="58" y="42" width="504" height="310" rx="26" mask="url(#maskOutsideAB)"></rect>
-          <circle id="aOnly" class="region off" cx="255" cy="205" r="125" mask="url(#maskNotB)" clip-path="url(#clipU)"></circle>
-          <circle id="bOnly" class="region off" cx="365" cy="205" r="125" mask="url(#maskNotA)" clip-path="url(#clipU)"></circle>
-          <circle id="intersect" class="region off" cx="255" cy="205" r="125" clip-path="url(#clipB)"></circle>
-          <circle class="circle-outline" cx="255" cy="205" r="125"></circle>
-          <circle class="circle-outline" cx="365" cy="205" r="125"></circle>
-          <text class="label" x="178" y="120">A</text>
-          <text class="label" x="425" y="120">B</text>
-          <text class="label" x="535" y="80">U</text>
+          <rect class="universe" x="58" y="46" width="504" height="340" rx="26"></rect>
+          <rect id="outside" class="region off" x="58" y="46" width="504" height="340" rx="26" mask="url(#maskOutsideABC)"></rect>
+          <circle id="aOnly" class="region off" cx="248" cy="205" r="122" mask="url(#maskNotBC)" clip-path="url(#clipU)"></circle>
+          <circle id="bOnly" class="region off" cx="372" cy="205" r="122" mask="url(#maskNotAC)" clip-path="url(#clipU)"></circle>
+          <circle id="cOnly" class="region off" cx="310" cy="282" r="122" mask="url(#maskNotAB)" clip-path="url(#clipU)"></circle>
+          <circle id="abOnly" class="region off" cx="248" cy="205" r="122" clip-path="url(#clipB)" mask="url(#maskNotC)"></circle>
+          <circle id="acOnly" class="region off" cx="248" cy="205" r="122" clip-path="url(#clipC)" mask="url(#maskNotB)"></circle>
+          <circle id="bcOnly" class="region off" cx="372" cy="205" r="122" clip-path="url(#clipC)" mask="url(#maskNotA)"></circle>
+          <circle id="abc" class="region off" cx="248" cy="205" r="122" clip-path="url(#clipB)" mask="url(#maskOnlyC)"></circle>
+          <circle class="circle-outline" cx="248" cy="205" r="122"></circle><circle class="circle-outline" cx="372" cy="205" r="122"></circle><circle class="circle-outline" cx="310" cy="282" r="122"></circle>
+          <text class="label" x="168" y="120">A</text><text class="label" x="430" y="120">B</text><text class="label" x="300" y="395">C</text><text class="label" x="535" y="84">U</text>
         </svg>
       </article>
-
-      <section class="answer-strip">
-        <div class="answer-row">
-          <div class="answer-title">คำตอบของฉัน</div>
-          <button class="mini-btn" onclick="clearAnswer()">ล้าง</button>
-        </div>
-        <div id="answerZone" class="expression-box"><span class="placeholder">แตะปุ่มสัญลักษณ์ด้านล่าง</span></div>
-      </section>
+      <section class="answer-strip"><div class="answer-row"><div class="answer-title">คำตอบของฉัน</div><button class="mini-btn" onclick="clearAnswer()">ล้าง</button></div><div id="answerZone" class="expression-box"><span class="placeholder">แตะปุ่มสัญลักษณ์ด้านล่าง</span></div></section>
     </section>
-
-    <section class="bottom-panel">
-      <div class="sheet-handle"></div>
-      <div class="bank-head">
-        <strong>ปุ่มสัญลักษณ์</strong>
-        <span>แตะคำตอบเพื่อลบ</span>
-      </div>
-      <div id="cardBank" class="button-bank"></div>
-      <button class="submit-btn" onclick="checkAnswer()">ส่งคำตอบ</button>
-    </section>
-
-    <div id="overlay" class="overlay">
-      <div class="confetti" id="confetti"></div>
-      <div class="modal">
-        <div class="modal-emoji" id="modalEmoji">🎉</div>
-        <h2 id="modalTitle">ถูกต้อง!</h2>
-        <p id="modalText">เก่งมาก</p>
-        <button id="modalButton" class="modal-btn" onclick="handleModalButton()">เริ่มใหม่</button>
-      </div>
-    </div>
+    <section class="bottom-panel"><div class="bank-head"><strong>ปุ่มสัญลักษณ์</strong><span>แตะคำตอบเพื่อลบ</span></div><div id="cardBank" class="button-bank"></div><button class="submit-btn" onclick="checkAnswer()">ส่งคำตอบ</button></section>
+    <div id="overlay" class="overlay"><div class="confetti" id="confetti"></div><div class="modal"><div class="modal-emoji" id="modalEmoji">🎉</div><h2 id="modalTitle">ถูกต้อง!</h2><p id="modalText">เก่งมาก</p><button id="modalButton" class="modal-btn" onclick="handleModalButton()">เริ่มใหม่</button></div></div>
   </main>
-
   <script>
-    const questions = [
-      {regions:["aOnly","intersect","bOnly"],answer:["A","∪","B"],accepted:["A∪B","B∪A"],explain:"A ∪ B คือทุกส่วนที่อยู่ใน A หรือ B"},
-      {regions:["intersect"],answer:["A","∩","B"],accepted:["A∩B","B∩A"],explain:"A ∩ B คือส่วนร่วมของทั้งสองเซต"},
-      {regions:["aOnly"],answer:["A","−","B"],accepted:["A−B","A∩B′"],explain:"A − B คืออยู่ใน A แต่ไม่อยู่ใน B"},
-      {regions:["bOnly"],answer:["B","−","A"],accepted:["B−A","B∩A′"],explain:"B − A คืออยู่ใน B แต่ไม่อยู่ใน A"},
-      {regions:["bOnly","outside"],answer:["A","′"],accepted:["A′"],explain:"A′ คือพื้นที่นอกเซต A ทั้งหมด"},
-      {regions:["aOnly","outside"],answer:["B","′"],accepted:["B′"],explain:"B′ คือพื้นที่นอกเซต B ทั้งหมด"},
-      {regions:["outside"],answer:["(","A","∪","B",")","′"],accepted:["(A∪B)′","(B∪A)′"],explain:"(A ∪ B)′ คือพื้นที่นอก A และ B ทั้งหมด"},
-      {regions:["aOnly","bOnly","outside"],answer:["(","A","∩","B",")","′"],accepted:["(A∩B)′","(B∩A)′"],explain:"(A ∩ B)′ คือทุกส่วนที่ไม่ใช่ส่วนร่วม"}
+    const levelExpressions = [
+      ['A'],['B'],['C'],['A','∪','B'],['A','∪','C'],['B','∪','C'],['A','∩','B'],['A','∩','C'],['B','∩','C'],['A','∪','B','∪','C'],
+      ['A','∩','B','∩','C'],['A','−','B'],['B','−','A'],['A','−','C'],['C','−','A'],['B','−','C'],['C','−','B'],['A','′'],['B','′'],['C','′'],
+      ['(','A','∪','B',')','′'],['(','A','∪','C',')','′'],['(','B','∪','C',')','′'],['(','A','∩','B',')','′'],['(','A','∩','C',')','′'],['(','B','∩','C',')','′'],['(','A','∪','B','∪','C',')','′'],['A','∩','B','′'],['B','∩','A','′'],['A','∩','C','′'],
+      ['C','∩','A','′'],['B','∩','C','′'],['C','∩','B','′'],['A','∩','B','∩','C','′'],['A','∩','C','∩','B','′'],['B','∩','C','∩','A','′'],['A','∩','B','∩','C'],['(','A','∪','B',')','∩','C'],['(','A','∪','C',')','∩','B'],['(','B','∪','C',')','∩','A'],
+      ['A','∪','(','B','∩','C',')'],['B','∪','(','A','∩','C',')'],['C','∪','(','A','∩','B',')'],['(','A','∪','B',')','−','C'],['(','A','∪','C',')','−','B'],['(','B','∪','C',')','−','A'],['(','A','−','B',')','∪','(','B','−','A',')'],['(','A','−','C',')','∪','(','C','−','A',')'],['(','B','−','C',')','∪','(','C','−','B',')'],['A','∪','B','∪','C','′'],
+      ['A','∪','B','′'],['B','∪','A','′'],['A','∪','C','′'],['C','∪','A','′'],['B','∪','C','′'],['C','∪','B','′'],['(','A','∩','B',')','∪','C'],['(','A','∩','C',')','∪','B'],['(','B','∩','C',')','∪','A'],['U','−','(','A','∩','B','∩','C',')']
     ];
-
-    // เตรียมไว้สำหรับอนาคต: เพิ่ม C ได้โดยเพิ่มปุ่ม C, เพิ่ม region ของแผนภาพ 3 เซต และเพิ่มชุด questions แบบ 3 เซต
-    const cardSymbols = ["A","B","C","∪","∩","−","′","(",")"];
-    const enabledSymbols = ["A","B","∪","∩","−","′","(",")"];
-    const regionIds = ["aOnly","intersect","bOnly","outside"];
-
-    let currentIndex=0,score=0,combo=1,lives=3,answerCards=[],answeredCorrectly=false;
-    let gameMode="easy";
-    let modalAction="restart";
-    let autoNextTimer=null;
-
-    const $=id=>document.getElementById(id);
-    const answerZone=$("answerZone"),cardBank=$("cardBank"),progressBar=$("progressBar");
-
-    function init(){renderCardBank();loadQuestion();updateModeUI();}
-
-    function selectMode(mode){gameMode=mode;updateModeUI();}
-
-    function updateModeUI(){
-      if($("easyModeBtn")) $("easyModeBtn").classList.toggle("active",gameMode==="easy");
-      if($("hardModeBtn")) $("hardModeBtn").classList.toggle("active",gameMode==="hard");
-      $("modeLabel").textContent=gameMode==="easy"?"โหมดง่าย":"โหมดยาก";
-    }
-
-    function startGame(){
-      currentIndex=0;score=0;combo=1;lives=3;answerCards=[];
-      $("startScreen").classList.remove("show");
-      loadQuestion();updateUI();
-    }
-
-    function renderCardBank(){
-      cardBank.innerHTML="";
-      cardSymbols.forEach(symbol=>{
-        const btn=document.createElement("button");
-        btn.className="symbol-btn";
-        btn.textContent=symbol;
-        if(!enabledSymbols.includes(symbol)){
-          btn.classList.add("future");
-          btn.disabled=true;
-          btn.title="เตรียมไว้สำหรับเซต C ในอนาคต";
-        }else{
-          btn.onclick=()=>addCard(symbol);
-        }
-        cardBank.appendChild(btn);
-      });
-    }
-
-    function loadQuestion(){
-      const q=questions[currentIndex];
-      answeredCorrectly=false;
-      regionIds.forEach(id=>{$(id).classList.remove("on");$(id).classList.add("off")});
-      q.regions.forEach(id=>{$(id).classList.add("on");$(id).classList.remove("off")});
-      answerCards=[];renderAnswer();updateUI();
-    }
-
-    function addCard(symbol){
-      answerCards.push(symbol);
-      renderAnswer();
-      if(navigator.vibrate) navigator.vibrate(18);
-    }
-
-    function removeCard(index){
-      answerCards.splice(index,1);
-      renderAnswer();
-      if(navigator.vibrate) navigator.vibrate(12);
-    }
-
-    function renderAnswer(){
-      answerZone.innerHTML="";
-      if(!answerCards.length){
-        answerZone.innerHTML='<span class="placeholder">แตะปุ่มสัญลักษณ์ด้านล่าง</span>';
-        return;
-      }
-      answerCards.forEach((symbol,index)=>{
-        const token=document.createElement("span");
-        token.className="expr-token";
-        token.textContent=symbol;
-        token.title="แตะเพื่อลบ";
-        token.onclick=()=>removeCard(index);
-        answerZone.appendChild(token);
-      });
-    }
-
-    function normalize(cards){
-      return cards.join("").split(" ").join("");
-    }
-
-    function checkAnswer(){
-      const q=questions[currentIndex];
-      const user=normalize(answerCards);
-      if(!user){
-        showWrongCard("ยังไม่ได้เลือกคำตอบ", "แตะปุ่มสัญลักษณ์ด้านล่างเพื่อสร้างนิพจน์ก่อนนะ");
-        shake(answerZone);
-        return;
-      }
-      if(q.accepted.includes(user)){
-        if(!answeredCorrectly){
-          score+=10*combo;
-          combo=Math.min(combo+1,5);
-          answeredCorrectly=true;
-        }
-        updateUI();
-        if(navigator.vibrate) navigator.vibrate([30,30,30]);
-        showCorrectCard(q.answer.join(" "));
-      }else{
-        lives=Math.max(lives-1,0);
-        combo=1;
-        updateUI();
-        shake(answerZone);
-        if(navigator.vibrate) navigator.vibrate(80);
-        if(lives===0){
-          setTimeout(()=>handleNoLives(),250);
-        }else{
-          showWrongCard("ยังไม่ถูกต้อง", "ลองสังเกตพื้นที่แรเงา แล้วเรียงนิพจน์ใหม่อีกครั้ง");
-        }
-      }
-    }
-
-    function handleNoLives(){
-      if(gameMode==="easy"){
-        lives=3;combo=1;answerCards=[];renderAnswer();updateUI();
-        showPracticeCard();
-      }else{
-        showGameOver();
-      }
-    }
-
-    function clearAnswer(){answerCards=[];renderAnswer();}
-
-    function nextQuestion(){
-      currentIndex=(currentIndex+1)%questions.length;
-      loadQuestion();
-    }
-
-    function updateUI(){
-      $("score").textContent=score;
-      $("comboText").textContent=`Combo x${combo}`;
-      $("lifeText").textContent="❤️".repeat(lives)+"🤍".repeat(3-lives);
-      $("levelText").textContent=`ด่านที่ ${currentIndex+1} / ${questions.length}`;
-      progressBar.style.width=((currentIndex+1)/questions.length*100)+"%";
-      updateModeUI();
-    }
-
-    function showCorrectCard(answerText){
-      modalAction="none";
-      $("modalEmoji").textContent="🎉";
-      $("modalTitle").textContent="ถูกต้อง!";
-      $("modalText").textContent=`คำตอบคือ ${answerText}`;
-      $("modalButton").style.display="none";
-      makeConfetti();
-      $("overlay").classList.add("show");
-      clearTimeout(autoNextTimer);
-      autoNextTimer=setTimeout(()=>{
-        $("overlay").classList.remove("show");
-        nextQuestion();
-      },1350);
-    }
-
-    function showWrongCard(title,message){
-      modalAction="wrong";
-      $("modalEmoji").textContent="🤔";
-      $("modalTitle").textContent=title;
-      $("modalText").textContent=message;
-      $("modalButton").style.display="block";
-      $("modalButton").textContent="ลองใหม่";
-      $("confetti").innerHTML="";
-      $("overlay").classList.add("show");
-    }
-
-    function showPracticeCard(){
-      modalAction="practice";
-      $("modalEmoji").textContent="💡";
-      $("modalTitle").textContent="ลองใหม่อีกครั้ง";
-      $("modalText").textContent="ระบบเติมหัวใจให้แล้ว อยู่ข้อเดิมเพื่อฝึกให้เข้าใจก่อนนะ";
-      $("modalButton").style.display="block";
-      $("modalButton").textContent="ลองต่อ";
-      $("confetti").innerHTML="";
-      $("overlay").classList.add("show");
-    }
-
-    function showGameOver(){
-      modalAction="restart";
-      $("modalEmoji").textContent="🏁";
-      $("modalTitle").textContent="Game Over";
-      $("modalText").textContent=`คะแนนของคุณคือ ${score} คะแนน`;
-      $("modalButton").style.display="block";
-      $("modalButton").textContent="เริ่มใหม่";
-      $("confetti").innerHTML="";
-      $("overlay").classList.add("show");
-    }
-
-    function handleModalButton(){
-      $("overlay").classList.remove("show");
-      if(modalAction==="wrong" || modalAction==="practice") return;
-      if(modalAction==="restart"){
-        currentIndex=0;score=0;combo=1;lives=3;answerCards=[];
-        loadQuestion();updateUI();
-      }
-    }
-
-    function makeConfetti(){
-      const box=$("confetti");box.innerHTML="";
-      const colors=["#2563eb","#7c3aed","#16a34a","#f59e0b","#ef4444"];
-      for(let i=0;i<42;i++){
-        const c=document.createElement("i");
-        c.style.left=Math.random()*100+"%";
-        c.style.background=colors[i%colors.length];
-        c.style.animationDelay=(Math.random()*.45)+"s";
-        c.style.transform=`rotate(${Math.random()*180}deg)`;
-        box.appendChild(c);
-      }
-    }
-
-    function shake(el){
-      el.animate([{transform:"translateX(0)"},{transform:"translateX(-8px)"},{transform:"translateX(8px)"},{transform:"translateX(0)"}],{duration:240});
-    }
-
+    const cardSymbols=['A','B','C','U','∪','∩','−','′','(',')'];
+    const regionIds=['aOnly','bOnly','cOnly','abOnly','acOnly','bcOnly','abc','outside'];
+    const regionData={aOnly:{A:true,B:false,C:false},bOnly:{A:false,B:true,C:false},cOnly:{A:false,B:false,C:true},abOnly:{A:true,B:true,C:false},acOnly:{A:true,B:false,C:true},bcOnly:{A:false,B:true,C:true},abc:{A:true,B:true,C:true},outside:{A:false,B:false,C:false}};
+    let currentIndex=0,score=0,combo=1,lives=3,answerCards=[],gameMode='easy',modalAction='restart',autoNextTimer=null,targetSet=null;
+    const $=id=>document.getElementById(id);const answerZone=$('answerZone'),cardBank=$('cardBank'),progressBar=$('progressBar');
+    function init(){renderCardBank();loadQuestion();updateModeUI()}
+    function selectMode(mode){gameMode=mode;updateModeUI()}
+    function updateModeUI(){if($('easyModeBtn'))$('easyModeBtn').classList.toggle('active',gameMode==='easy');if($('hardModeBtn'))$('hardModeBtn').classList.toggle('active',gameMode==='hard');$('modeLabel').textContent=gameMode==='easy'?'โหมดง่าย':'โหมดยาก'}
+    function startGame(){currentIndex=0;score=0;combo=1;lives=3;answerCards=[];$('startScreen').classList.remove('show');loadQuestion();updateUI()}
+    function renderCardBank(){cardBank.innerHTML='';cardSymbols.forEach(symbol=>{const btn=document.createElement('button');btn.className='symbol-btn';btn.textContent=symbol;btn.onclick=()=>addCard(symbol);cardBank.appendChild(btn)})}
+    function loadQuestion(){answerCards=[];renderAnswer();targetSet=evaluate(levelExpressions[currentIndex]);paint(targetSet);updateUI()}
+    function addCard(symbol){answerCards.push(symbol);renderAnswer();if(navigator.vibrate)navigator.vibrate(18)}
+    function removeCard(index){answerCards.splice(index,1);renderAnswer();if(navigator.vibrate)navigator.vibrate(12)}
+    function renderAnswer(){answerZone.innerHTML='';if(!answerCards.length){answerZone.innerHTML='<span class="placeholder">แตะปุ่มสัญลักษณ์ด้านล่าง</span>';return}answerCards.forEach((symbol,index)=>{const token=document.createElement('span');token.className='expr-token';token.textContent=symbol;token.onclick=()=>removeCard(index);answerZone.appendChild(token)})}
+    function clearAnswer(){answerCards=[];renderAnswer()}
+    function checkAnswer(){if(!answerCards.length){showWrongCard('ยังไม่ได้เลือกคำตอบ','แตะปุ่มสัญลักษณ์ด้านล่างเพื่อสร้างนิพจน์ก่อนนะ');shake(answerZone);return}let userSet;try{userSet=evaluate(answerCards)}catch(e){showWrongCard('นิพจน์ยังไม่สมบูรณ์','ลองตรวจวงเล็บและตำแหน่งของเครื่องหมายอีกครั้ง');shake(answerZone);return}if(equalSets(userSet,targetSet)){score+=10*combo;combo=Math.min(combo+1,5);updateUI();if(navigator.vibrate)navigator.vibrate([30,30,30]);showCorrectCard(levelExpressions[currentIndex].join(' '))}else{lives=Math.max(lives-1,0);combo=1;updateUI();shake(answerZone);if(navigator.vibrate)navigator.vibrate(80);if(lives===0)setTimeout(()=>handleNoLives(),250);else showWrongCard('ยังไม่ถูกต้อง','ลองสังเกตพื้นที่แรเงา แล้วเรียงนิพจน์ใหม่อีกครั้ง')}}
+    function handleNoLives(){if(gameMode==='easy'){lives=3;combo=1;answerCards=[];renderAnswer();updateUI();showPracticeCard()}else showGameOver()}
+    function nextQuestion(){currentIndex=(currentIndex+1)%levelExpressions.length;loadQuestion()}
+    function updateUI(){$('score').textContent=score;$('comboText').textContent=`Combo x${combo}`;$('lifeText').textContent='❤️'.repeat(lives)+'🤍'.repeat(3-lives);$('levelText').textContent=`ด่านที่ ${currentIndex+1} / ${levelExpressions.length}`;progressBar.style.width=((currentIndex+1)/levelExpressions.length*100)+'%';updateModeUI()}
+    function paint(setObj){regionIds.forEach(id=>{const el=$(id);if(setObj[id]){el.classList.add('on');el.classList.remove('off')}else{el.classList.remove('on');el.classList.add('off')}})}
+    function equalSets(a,b){return regionIds.every(id=>!!a[id]===!!b[id])}
+    function evaluate(tokens){let pos=0;function parseUnion(){let left=parseInter();while(tokens[pos]==='∪'){pos++;left=op(left,parseInter(),'∪')}return left}function parseInter(){let left=parseComp();while(tokens[pos]==='∩'||tokens[pos]==='−'){const o=tokens[pos++];left=op(left,parseComp(),o)}return left}function parseComp(){let v=parsePrimary();while(tokens[pos]==='′'){pos++;v=comp(v)}return v}function parsePrimary(){const t=tokens[pos];if(!t)throw Error('missing');if(['A','B','C','U'].includes(t)){pos++;return base(t)}if(t==='('){pos++;const v=parseUnion();if(tokens[pos]!==')')throw Error('paren');pos++;return v}throw Error('bad')}const r=parseUnion();if(pos<tokens.length)throw Error('extra');return r}
+    function base(s){const r={};regionIds.forEach(id=>{r[id]=s==='U'?true:regionData[id][s]});return r}function comp(a){const r={};regionIds.forEach(id=>r[id]=!a[id]);return r}function op(a,b,o){const r={};regionIds.forEach(id=>{if(o==='∪')r[id]=a[id]||b[id];if(o==='∩')r[id]=a[id]&&b[id];if(o==='−')r[id]=a[id]&&!b[id]});return r}
+    function showCorrectCard(answerText){modalAction='none';$('modalEmoji').textContent='🎉';$('modalTitle').textContent='ถูกต้อง!';$('modalText').textContent=`ตัวอย่างคำตอบ: ${answerText}`;$('modalButton').style.display='none';makeConfetti();$('overlay').classList.add('show');clearTimeout(autoNextTimer);autoNextTimer=setTimeout(()=>{$('overlay').classList.remove('show');nextQuestion()},1350)}
+    function showWrongCard(title,message){modalAction='wrong';$('modalEmoji').textContent='🤔';$('modalTitle').textContent=title;$('modalText').textContent=message;$('modalButton').style.display='block';$('modalButton').textContent='ลองใหม่';$('confetti').innerHTML='';$('overlay').classList.add('show')}
+    function showPracticeCard(){modalAction='practice';$('modalEmoji').textContent='💡';$('modalTitle').textContent='ลองใหม่อีกครั้ง';$('modalText').textContent='ระบบเติมหัวใจให้แล้ว อยู่ข้อเดิมเพื่อฝึกให้เข้าใจก่อนนะ';$('modalButton').style.display='block';$('modalButton').textContent='ลองต่อ';$('confetti').innerHTML='';$('overlay').classList.add('show')}
+    function showGameOver(){modalAction='restart';$('modalEmoji').textContent='🏁';$('modalTitle').textContent='Game Over';$('modalText').textContent=`คะแนนของคุณคือ ${score} คะแนน`;$('modalButton').style.display='block';$('modalButton').textContent='เริ่มใหม่';$('confetti').innerHTML='';$('overlay').classList.add('show')}
+    function handleModalButton(){$('overlay').classList.remove('show');if(modalAction==='wrong'||modalAction==='practice')return;if(modalAction==='restart'){currentIndex=0;score=0;combo=1;lives=3;answerCards=[];loadQuestion();updateUI()}}
+    function makeConfetti(){const box=$('confetti');box.innerHTML='';const colors=['#2563eb','#7c3aed','#16a34a','#f59e0b','#ef4444'];for(let i=0;i<42;i++){const c=document.createElement('i');c.style.left=Math.random()*100+'%';c.style.background=colors[i%colors.length];c.style.animationDelay=(Math.random()*.45)+'s';c.style.transform=`rotate(${Math.random()*180}deg)`;box.appendChild(c)}}
+    function shake(el){el.animate([{transform:'translateX(0)'},{transform:'translateX(-8px)'},{transform:'translateX(8px)'},{transform:'translateX(0)'}],{duration:240})}
     init();
   </script>
 </body>
