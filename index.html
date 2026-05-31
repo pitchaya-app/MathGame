@@ -945,7 +945,92 @@ svg {
     min-height: 48px;
   }
 }
-  
+
+    /* ===== Final Start Screen Fix: ต้องอยู่ท้ายสุด ===== */
+body:has(.start-screen.show),
+html:has(.start-screen.show) {
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 50% 12%, rgba(34,211,238,.45), transparent 28%),
+    radial-gradient(circle at 20% 22%, rgba(59,130,246,.34), transparent 26%),
+    radial-gradient(circle at 84% 76%, rgba(168,85,247,.38), transparent 30%),
+    linear-gradient(160deg, #0284c7 0%, #1d4ed8 45%, #5b21b6 100%) !important;
+}
+
+.start-screen.show {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: calc(-1 * env(safe-area-inset-bottom));
+  min-height: calc(100dvh + env(safe-area-inset-bottom));
+  background:
+    radial-gradient(circle at 50% 12%, rgba(34,211,238,.45), transparent 28%),
+    radial-gradient(circle at 20% 22%, rgba(59,130,246,.34), transparent 26%),
+    radial-gradient(circle at 84% 76%, rgba(168,85,247,.38), transparent 30%),
+    linear-gradient(160deg, #0284c7 0%, #1d4ed8 45%, #5b21b6 100%) !important;
+}
+  /* ===== Compact Game Layout ===== */
+.topbar {
+  padding:
+    calc(10px + env(safe-area-inset-top))
+    16px
+    6px;
+}
+
+.game-logo {
+  width: 48px;
+  height: 48px;
+  border-radius: 15px;
+}
+
+.brand-title {
+  font-size: 1.08rem;
+}
+
+.brand-sub {
+  font-size: .78rem;
+}
+
+.menu-btn {
+  width: 42px;
+  height: 42px;
+}
+
+.scorebox {
+  min-height: 42px;
+  padding: 7px 11px;
+}
+
+.progress-wrap {
+  padding: 0 16px 9px;
+}
+
+.game-scroll {
+  padding: 0 16px 8px;
+}
+
+.venn-card {
+  min-height: 292px;
+  border-radius: 28px;
+}
+
+svg {
+  max-width: 450px;
+}
+
+.answer-strip {
+  margin-top: 10px;
+}
+
+.expression-box {
+  min-height: 58px;
+}
+
+.bottom-panel {
+  margin: 0 16px calc(10px + env(safe-area-inset-bottom));
+  padding: 13px;
+}
 
     
 
