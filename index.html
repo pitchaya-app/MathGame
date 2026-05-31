@@ -1508,7 +1508,21 @@ function init(){
       if($('hardModeBtn'))$('hardModeBtn').classList.toggle('active',gameMode==='hard');
       $('modeLabel').textContent=gameMode==='easy'?'โหมดฝึกหัด':'โหมดท้าทาย';
     }
-    function startGame(){currentIndex=0;score=0;combo=1;lives=START_LIVES;correctStreak=0;answerCards=[];clearSavedProgress();$('startScreen').classList.remove('show');loadQuestion();updateUI();saveProgress()}
+   function startGame(){
+  currentIndex = 0;
+  score = 0;
+  combo = 1;
+  lives = START_LIVES;
+  correctStreak = 0;
+  answerCards = [];
+
+  clearSavedProgress();
+  $('startScreen').classList.remove('show');
+
+  loadQuestion();
+  updateUI();
+  saveProgress(true);
+}
 
     function continueGame(){
       const data=getSavedProgress();
