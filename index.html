@@ -36,9 +36,15 @@
     *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,
 body {
+  width: 100%;
   min-height: 100%;
   min-height: -webkit-fill-available;
-  background: linear-gradient(160deg, #0284c7 0%, #1d4ed8 45%, #5b21b6 100%);
+  margin: 0;
+  background:
+    radial-gradient(circle at 50% 12%, rgba(34,211,238,.45), transparent 28%),
+    radial-gradient(circle at 20% 22%, rgba(59,130,246,.34), transparent 26%),
+    radial-gradient(circle at 84% 76%, rgba(168,85,247,.38), transparent 30%),
+    linear-gradient(160deg, #0284c7 0%, #1d4ed8 45%, #5b21b6 100%) !important;
 }
     body{
       margin:0;
@@ -348,20 +354,28 @@ body {
   /* ===== VENN Quest Splash / Start Screen ===== */
 .start-screen {
   position: fixed;
-  inset: 0;
+  top: 0;
+  left: 0;
+  right: 0;
+
+  /* แก้แถบขาวล่าง iOS PWA */
+  bottom: calc(-1 * env(safe-area-inset-bottom));
+
   min-height: 100vh;
   min-height: 100dvh;
   min-height: -webkit-fill-available;
+
   padding:
     calc(18px + env(safe-area-inset-top))
     18px
-    calc(18px + env(safe-area-inset-bottom));
+    calc(30px + env(safe-area-inset-bottom));
 
   background:
     radial-gradient(circle at 50% 12%, rgba(34,211,238,.45), transparent 28%),
     radial-gradient(circle at 20% 22%, rgba(59,130,246,.34), transparent 26%),
     radial-gradient(circle at 84% 76%, rgba(168,85,247,.38), transparent 30%),
     linear-gradient(160deg, #0284c7 0%, #1d4ed8 45%, #5b21b6 100%);
+
   overflow: hidden;
 }
 
@@ -639,6 +653,13 @@ body {
   .app {
     background: #5b21b6;
   }
+}
+    body:has(.start-screen.show) {
+  background:
+    radial-gradient(circle at 50% 12%, rgba(34,211,238,.45), transparent 28%),
+    radial-gradient(circle at 20% 22%, rgba(59,130,246,.34), transparent 26%),
+    radial-gradient(circle at 84% 76%, rgba(168,85,247,.38), transparent 30%),
+    linear-gradient(160deg, #0284c7 0%, #1d4ed8 45%, #5b21b6 100%) !important;
 }
   
 
