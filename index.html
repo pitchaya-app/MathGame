@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <meta name="theme-color" content="#2563eb" />
-  <title>Venn Quest ABC | 100 Levels</title>
+  <title>Venn Quest | 100 Levels</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -252,28 +252,209 @@
 
     @media (min-width:720px){body{padding:16px}.app{min-height:calc(100dvh - 32px);border-radius:36px;overflow:hidden;box-shadow:0 30px 90px rgba(15,23,42,.14)}}
     @media (max-width:390px){.venn-card{min-height:305px}.expression-box{min-height:58px;font-size:1.65rem}.symbol-btn{height:38px;font-size:1.05rem;border-radius:12px}.button-bank{gap:4px}.life-box span{font-size:.82rem}.scorebox{padding:7px 8px}.action-btn{min-height:46px}}
+  /* ===== VENN Quest Splash / Start Screen ===== */
+.start-screen {
+  background:
+    radial-gradient(circle at 50% 12%, rgba(34,211,238,.45), transparent 28%),
+    radial-gradient(circle at 20% 22%, rgba(59,130,246,.34), transparent 26%),
+    radial-gradient(circle at 84% 76%, rgba(168,85,247,.38), transparent 30%),
+    linear-gradient(160deg, #0284c7 0%, #1d4ed8 45%, #5b21b6 100%);
+  overflow: hidden;
+}
+
+.start-screen::before {
+  content: "";
+  position: absolute;
+  inset: -20%;
+  background:
+    repeating-conic-gradient(
+      from 0deg,
+      rgba(255,255,255,.08) 0deg 5deg,
+      transparent 5deg 16deg
+    );
+  opacity: .18;
+  animation: splashRays 18s linear infinite;
+}
+
+.start-screen::after {
+  content: "✦  •  ✧  •  ✦";
+  position: absolute;
+  inset: auto 0 8%;
+  text-align: center;
+  color: rgba(255,255,255,.65);
+  font-size: 1.4rem;
+  letter-spacing: 18px;
+  pointer-events: none;
+}
+
+.start-card {
+  width: min(100%, 390px);
+  border-radius: 34px;
+  padding: 22px;
+  background: rgba(255,255,255,.14);
+  border: 1px solid rgba(255,255,255,.26);
+  box-shadow:
+    0 30px 90px rgba(15,23,42,.34),
+    inset 0 1px 0 rgba(255,255,255,.28);
+  backdrop-filter: blur(18px);
+  color: #fff;
+}
+
+.splash-icon-wrap {
+  width: min(76vw, 280px);
+  aspect-ratio: 1 / 1;
+  margin: 0 auto 14px;
+  border-radius: 28px;
+  padding: 8px;
+  background: rgba(255,255,255,.18);
+  border: 1px solid rgba(255,255,255,.34);
+  box-shadow:
+    0 24px 54px rgba(15,23,42,.30),
+    0 0 42px rgba(34,211,238,.28);
+}
+
+.splash-icon {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+  border-radius: 22px;
+  box-shadow: 0 18px 35px rgba(15,23,42,.28);
+}
+
+.start-card h1 {
+  margin: 6px 0 2px;
+  font-size: clamp(2rem, 8vw, 3.25rem);
+  line-height: .98;
+  font-weight: 900;
+  letter-spacing: -1px;
+  color: #fff;
+  text-shadow:
+    0 4px 0 rgba(30,64,175,.75),
+    0 14px 28px rgba(15,23,42,.35);
+}
+
+.start-card .quest-word {
+  color: #fde047;
+  text-shadow:
+    0 4px 0 rgba(180,83,9,.9),
+    0 14px 28px rgba(15,23,42,.35);
+}
+
+.start-card p {
+  margin: 10px auto 0;
+  max-width: 310px;
+  color: rgba(255,255,255,.86);
+  font-size: .94rem;
+  line-height: 1.45;
+}
+
+.splash-badges {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin: 14px 0 2px;
+}
+
+.splash-badge {
+  border-radius: 999px;
+  padding: 6px 10px;
+  background: rgba(255,255,255,.18);
+  border: 1px solid rgba(255,255,255,.26);
+  color: #fff;
+  font-size: .76rem;
+  font-weight: 800;
+}
+
+.mode-grid {
+  margin-top: 16px;
+}
+
+.mode-card {
+  background: rgba(255,255,255,.92);
+  border-color: rgba(255,255,255,.50);
+}
+
+.mode-card.active {
+  background: #eff6ff;
+  border-color: rgba(96,165,250,.95);
+  box-shadow: 0 14px 28px rgba(15,23,42,.20);
+}
+
+.start-btn {
+  min-height: 54px;
+  border-radius: 20px;
+  font-size: 1.05rem;
+}
+
+#continueBtn {
+  background: linear-gradient(135deg, #22c55e, #16a34a) !important;
+}
+
+@keyframes splashRays {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
   </style>
 </head>
 <body>
   <main class="app">
-    <section id="startScreen" class="start-screen show">
-      <div class="start-card">
-        <div class="start-logo">∩</div>
-        <h1>Venn Quest ABC</h1>
-        <p>100 ด่าน: เริ่มจาก 2 เซต แล้วค่อยเพิ่ม C พร้อมด่าน Challenge ที่จำกัดปุ่ม เริ่มต้น 5 หัวใจ</p>
-        <div class="mode-grid">
-          <button id="easyModeBtn" class="mode-card active" onclick="selectMode('easy')"><strong>โหมดง่าย</strong><span>หัวใจหมด เติมใหม่และอยู่ข้อเดิม</span></button>
-          <button id="hardModeBtn" class="mode-card" onclick="selectMode('hard')"><strong>โหมดยาก</strong><span>หัวใจหมด Game Over</span></button>
-        </div>
-        <button id="continueBtn" class="start-btn" style="display:none;background:linear-gradient(135deg,#16a34a,#22c55e);" onclick="continueGame()">เล่นต่อ</button>
-        <button class="start-btn" onclick="startGame()">เริ่มเกมใหม่</button>
-      </div>
-    </section>
+<section id="startScreen" class="start-screen show">
+  <div class="start-card">
+    <div class="splash-icon-wrap">
+      <img
+        class="splash-icon"
+        src="./assets/venn-quest-icon.png"
+        alt="VENN Quest icon"
+      />
+    </div>
+
+    <h1>
+      VENN <span class="quest-word">Quest</span>
+    </h1>
+
+    <p>
+      เกมฝึกอ่านแผนภาพเวนน์และเรียงนิพจน์เซต ผ่านด่านท้าทาย 100 ด่าน
+    </p>
+
+    <div class="splash-badges">
+      <span class="splash-badge">A • B • C</span>
+      <span class="splash-badge">100 Levels</span>
+      <span class="splash-badge">Challenge Mode</span>
+    </div>
+
+    <div class="mode-grid">
+      <button id="easyModeBtn" class="mode-card active" onclick="selectMode('easy')">
+        <strong>Normal</strong>
+        <span>หัวใจหมด เติมใหม่และอยู่ข้อเดิม</span>
+      </button>
+
+      <button id="hardModeBtn" class="mode-card" onclick="selectMode('hard')">
+        <strong>Hardcore</strong>
+        <span>หัวใจหมด Game Over</span>
+      </button>
+    </div>
+
+    <button
+      id="continueBtn"
+      class="start-btn"
+      style="display:none"
+      onclick="continueGame()"
+    >
+      เล่นต่อ
+    </button>
+
+    <button class="start-btn" onclick="startGame()">
+      เริ่มเกมใหม่
+    </button>
+  </div>
+</section>
 
     <header class="topbar">
       <div class="brand">
         <div class="logo">∩</div>
-        <div class="brand-text"><div class="brand-title">Venn Quest ABC</div><div class="brand-sub" id="modeLabel">โหมดง่าย</div></div>
+        <div class="brand-text"><div class="brand-title">Venn Quest</div><div class="brand-sub" id="modeLabel">Normal</div></div>
       </div>
       <div class="score-life">
   <button class="menu-btn" onclick="showGameMenu()" aria-label="เมนูเกม">☰</button>
@@ -753,10 +934,11 @@ $('comboText').textContent=`⭐ ${score} • Combo x${combo}`;
       $('confetti').innerHTML='';
       $('overlay').classList.add('show');
     }
+
     function showGameMenu() {
   modalAction = 'menu';
   $('modalEmoji').textContent = '⚙️';
-  $('modalTitle').textContent = 'เมนูเกม';
+  $('modalTitle').textContent = 'VENN Quest';
   $('modalText').textContent = `ตอนนี้อยู่ด่านที่ ${currentIndex + 1} • คะแนน ${score} คะแนน`;
 
   $('modalButton').style.display = 'block';
