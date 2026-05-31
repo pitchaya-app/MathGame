@@ -388,8 +388,14 @@
   pointer-events: auto;
 }
 
-    .start-card button,
+.start-card button,
 .start-btn,
+.mode-card {
+  position: relative;
+  z-index: 3;
+  pointer-events: auto;
+  touch-action: manipulation;
+}
 
 
 .splash-icon-wrap {
@@ -459,9 +465,7 @@
   font-weight: 800;
 }
 
-.mode-grid {
-  margin-top: 16px;
-}
+
 
 
 
@@ -479,7 +483,7 @@
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }
 }
-    .mode-grid {
+   .mode-grid {
   display: grid;
   grid-template-columns: 1fr;
   gap: 10px;
@@ -555,6 +559,10 @@
 
 .mode-card:active {
   transform: scale(.98);
+}
+
+.mode-card.active:active {
+  transform: translateY(-1px) scale(.98);
 }
   </style>
 </head>
