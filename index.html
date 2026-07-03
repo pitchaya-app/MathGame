@@ -451,6 +451,22 @@ const DB_PROGRESS_KEY='latest_progress';
 let currentIndex=0,score=0,combo=1,lives=START_LIVES,correctStreak=0,answerCards=[],gameMode='easy',modalAction='restart',autoNextTimer=null,targetSet=null,activeLevel=levels[0];
 const $=id=>document.getElementById(id);
 const answerZone=$('answerZone'),cardBank=$('cardBank'),progressBar=$('progressBar');
+const answerZone=$('answerZone'),
+      cardBank=$('cardBank'),
+      progressBar=$('progressBar');
+
+const sfxCorrect = new Audio('./assets/sfx-correct.mp3');
+sfxCorrect.preload = 'auto';
+sfxCorrect.volume = 0.8;
+
+function playCorrectSound() {
+  try {
+    sfxCorrect.currentTime = 0;
+    sfxCorrect.play();
+  } catch (e) {
+    console.log(e);
+  }
+}
 
 function openGameDB(){return new Promise((resolve,reject)=>{if(!('indexedDB' in window)){reject(new Error('IndexedDB not supported'));return}const req=indexedDB.open(DB_NAME,DB_VERSION);req.onupgradeneeded=()=>{const db=req.result;if(!db.objectStoreNames.contains(DB_STORE))db.createObjectStore(DB_STORE)};req.onsuccess=()=>resolve(req.result);req.onerror=()=>reject(req.error)})}
 async function saveProgressToIDB(data){try{const db=await openGameDB();await new Promise((resolve,reject)=>{const tx=db.transaction(DB_STORE,'readwrite');tx.objectStore(DB_STORE).put(data,DB_PROGRESS_KEY);tx.oncomplete=resolve;tx.onerror=()=>reject(tx.error)});db.close()}catch(e){console.warn('IndexedDB save failed:',e)}}
@@ -572,7 +588,14 @@ function renderAnswer(){answerZone.innerHTML='';if(!answerCards.length){answerZo
 function clearAnswer(){answerCards=[];renderAnswer();saveProgress(true)}
 function revealAnswer(){if(lives<=0){showWrongCard('หัวใจไม่พอ','การดูเฉลยต้องใช้หัวใจ 1 ดวง');return}modalAction='revealConfirm';$('modalEmoji').textContent='⚠️';$('modalTitle').textContent='ยืนยันการดูเฉลย?';$('modalText').textContent='ถ้าดูเฉลย จะเสียหัวใจ 1 ดวง และ Streak จะเริ่มนับใหม่';$('modalButton').style.display='block';$('modalButton').textContent='ยืนยันเฉลย';$('modalCancel').style.display='block';$('modalCancel').textContent='ยกเลิก';$('modalExit').style.display='none';$('confetti').innerHTML='';$('overlay').classList.add('show')}
 function confirmReveal(){if(lives<=0){$('overlay').classList.remove('show');showWrongCard('หัวใจไม่พอ','การดูเฉลยต้องใช้หัวใจ 1 ดวง');return}lives=Math.max(lives-1,0);combo=1;correctStreak=0;updateUI();saveProgress(true);const answerText=(activeLevel.show||activeLevel.expr).join(' ');modalAction=lives===0?'revealNoLives':'reveal';$('modalEmoji').textContent='👀';$('modalTitle').textContent='เฉลย';$('modalText').innerHTML=`<span class="reveal-answer-note">เสียหัวใจ 1 ดวง</span><span class="reveal-answer-box"><span class="reveal-answer-label">ตัวอย่างคำตอบ</span><span class="reveal-answer-text">${answerText}</span></span>`;$('modalButton').style.display='block';$('modalButton').textContent='ปิด';$('modalCancel').style.display='none';$('modalExit').style.display='none';$('confetti').innerHTML='';$('overlay').classList.add('show')}
-function checkAnswer(){if(!answerCards.length){showWrongCard('ยังไม่ได้เลือกคำตอบ','แตะปุ่มสัญลักษณ์ด้านล่างเพื่อสร้างนิพจน์ก่อนนะ');shake(answerZone);return}let userSet;try{userSet=evaluate(answerCards)}catch(e){showWrongCard('นิพจน์ยังไม่สมบูรณ์','ลองตรวจวงเล็บและตำแหน่งของเครื่องหมายอีกครั้ง');shake(answerZone);return}if(equalSets(userSet,targetSet)){score+=10*combo;combo=Math.min(combo+1,5);correctStreak++;const gotBonusHeart=correctStreak%5===0;if(gotBonusHeart)lives++;updateUI();saveProgress(true);if(navigator.vibrate)navigator.vibrate([30,30,30]);showCorrectCard((activeLevel.show||activeLevel.expr).join(' '),gotBonusHeart)}else{lives=Math.max(lives-1,0);combo=1;correctStreak=0;updateUI();saveProgress(true);shake(answerZone);if(navigator.vibrate)navigator.vibrate(80);if(lives===0)setTimeout(()=>handleNoLives(),250);else showWrongCard('ยังไม่ถูกต้อง','ลองสังเกตพื้นที่แรเงา แล้วเรียงนิพจน์ใหม่อีกครั้ง')}}
+function checkAnswer(){if(!answerCards.length){showWrongCard('ยังไม่ได้เลือกคำตอบ','แตะปุ่มสัญลักษณ์ด้านล่างเพื่อสร้างนิพจน์ก่อนนะ');shake(answerZone);return}let userSet;try{userSet=evaluate(answerCards)}catch(e){showWrongCard('นิพจน์ยังไม่สมบูรณ์','ลองตรวจวงเล็บและตำแหน่งของเครื่องหมายอีกครั้ง');shake(answerZone);return}
+if(equalSets(userSet,targetSet)){
+
+    playCorrectSound();
+
+    score+=10*combo;
+    combo=Math.min(combo+1,5);
+correctStreak++;const gotBonusHeart=correctStreak%5===0;if(gotBonusHeart)lives++;updateUI();saveProgress(true);if(navigator.vibrate)navigator.vibrate([30,30,30]);showCorrectCard((activeLevel.show||activeLevel.expr).join(' '),gotBonusHeart)}else{lives=Math.max(lives-1,0);combo=1;correctStreak=0;updateUI();saveProgress(true);shake(answerZone);if(navigator.vibrate)navigator.vibrate(80);if(lives===0)setTimeout(()=>handleNoLives(),250);else showWrongCard('ยังไม่ถูกต้อง','ลองสังเกตพื้นที่แรเงา แล้วเรียงนิพจน์ใหม่อีกครั้ง')}}
 function handleNoLives(){if(gameMode==='easy'){lives=START_LIVES;combo=1;correctStreak=0;answerCards=[];renderAnswer();updateUI();saveProgress(true);showPracticeCard()}else showGameOver()}
 function nextQuestion(){currentIndex=(currentIndex+1)%levels.length;if(currentIndex===0){showFinishCard();clearSavedProgress();return}loadQuestion();saveProgress(true)}
 function updateUI(){$('comboText').textContent=`⭐ ${score} • Combo x${combo}`;if(lives<=HEART_ICON_LIMIT){$('lifeText').textContent='❤️'.repeat(lives)+'🤍'.repeat(HEART_ICON_LIMIT-lives)}else{$('lifeText').textContent=`${lives} ❤️`}$('levelText').textContent=`ด่านที่ ${currentIndex+1} / ${levels.length}`;progressBar.style.width=((currentIndex+1)/levels.length*100)+'%';updateModeUI()}
