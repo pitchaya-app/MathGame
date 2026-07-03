@@ -1,4 +1,4 @@
-const CACHE_NAME = 'venn-quest-v1.0.0';
+const CACHE_NAME = 'venn-quest-v1.1.0';
 const APP_SHELL = [
   './',
   './index.html',
@@ -23,12 +23,27 @@ self.addEventListener('fetch', event => {
 
   if (event.request.mode === 'navigate' || url.pathname.endsWith('/index.html')) {
     event.respondWith(
-      fetch(event.request)
-        .then(response => {
-          const copy = response.clone();
-          caches.open(CACHE_NAME).then(cache => cache.put('./index.html', copy));
-          return response;
-        })
+return fetch(request).then(response => {
+  const url = new URL(request.url);
+
+  const isAudio =
+    url.pathname.endsWith('.mp3') ||
+    url.pathname.endsWith('.m4a') ||
+    url.pathname.endsWith('.wav') ||
+    url.pathname.endsWith('.ogg');
+
+  // ไม่ cache ไฟล์เสียง และไม่ cache partial response 206
+  if (
+    response &&
+    response.status === 200 &&
+    request.method === 'GET' &&
+    !isAudio
+  ) {
+    cache.put(request, response.clone());
+  }
+
+  return response;
+});
         .catch(() => caches.match('./index.html'))
     );
     return;
